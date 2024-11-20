@@ -20,13 +20,12 @@
 package com.xuncorp.openmrw.core.rw
 
 import com.xuncorp.openmrw.core.format.MrwFormat
-import com.xuncorp.openmrw.core.format.MrwFormatType
 import kotlinx.io.Source
 
 /**
  * A reader that can read a [MrwFormat] from a [Source].
  */
-internal abstract class MrwReader(val type: MrwFormatType) {
+internal abstract class MrwReader {
 
     /**
      * Returns true if the reader matches the [source].

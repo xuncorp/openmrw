@@ -15,11 +15,30 @@
  * 02110-1301 USA
  */
 
-@file:Suppress("unused")
+package com.xuncorp.openmrw.core.format
 
-package com.xuncorp.openmrw.core.format.flac
+class MrwStreamInfo {
+    /**
+     * Sample rate.
+     */
+    var sampleRate = 0
+        internal set
 
-import com.xuncorp.openmrw.core.format.MrwFormat
-import com.xuncorp.openmrw.core.format.MrwFormatType
+    /**
+     * Number of channels.
+     */
+    var channelCount = 0
+        internal set
 
-class FlacMrwFormat : MrwFormat(MrwFormatType.Flac)
+    /**
+     * Bits per sample.
+     */
+    var bits = 0
+        internal set
+
+    /**
+     * Total number of samples, irrespective of the number of channels.
+     */
+    var sampleCount = 0L
+        internal set
+}

@@ -19,41 +19,14 @@
 
 package com.xuncorp.openmrw.core.format
 
-abstract class MrwFormat {
-
+abstract class MrwFormat(val mrwFormatType: MrwFormatType) {
     /**
-     * Sample rate.
+     * [MrwStreamInfo]
      */
-    var sampleRate = 0
-        internal set
-
-    /**
-     * Number of channels.
-     */
-    var channelCount = 0
-        internal set
-
-    /**
-     * Bits per sample.
-     */
-    var bits = 0
-        internal set
-
-    /**
-     * Total number of samples, irrespective of the number of channels.
-     */
-    var sampleCount = 0L
-        internal set
+    val mrwStreamInfo = MrwStreamInfo()
 
     /**
      * [MrwComment]
      */
     val mrwComment = MrwComment()
-
-    override fun toString(): String {
-        return "MrwFormat(sampleRate=$sampleRate, " +
-                "channelCount=$channelCount, " +
-                "bits=$bits, " +
-                "sampleCount=$sampleCount)"
-    }
 }

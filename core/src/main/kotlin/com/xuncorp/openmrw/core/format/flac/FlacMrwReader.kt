@@ -18,13 +18,12 @@
 package com.xuncorp.openmrw.core.format.flac
 
 import com.xuncorp.openmrw.core.format.MrwFormat
-import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
 import kotlinx.io.bytestring.ByteString
 import kotlinx.io.readByteString
 
-internal class FlacMrwReader : MrwReader(MrwFormatType.Flac) {
+internal class FlacMrwReader : MrwReader() {
     private fun handleStreamInfo(
         source: Source,
         flacHeader: FlacHeader,
@@ -32,7 +31,7 @@ internal class FlacMrwReader : MrwReader(MrwFormatType.Flac) {
     ) {
         val flacStreamInfo = FlacStreamInfo(source.readByteString(flacHeader.length))
 
-        flacMrwFormat.apply {
+        flacMrwFormat.mrwStreamInfo.apply {
             sampleRate = flacStreamInfo.sampleRate
             channelCount = flacStreamInfo.channelCount
             bits = flacStreamInfo.bits
