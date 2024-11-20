@@ -33,11 +33,36 @@ internal class FlacMrwReader : MrwReader(MrwFormatType.Flac) {
     }
 
     override fun fetch(source: Source): MrwFormat {
+        val peek = source.peek()
         val flacMrwFormat = FlacMrwFormat()
 
-        flacMrwFormat.sampleRate = 0
+        // Skip magic header
+        peek.skip(MAGIC_HEADER.size.toLong())
 
-        return FlacMrwFormat()
+        var flacHeader: FlacHeader
+        do {
+            flacHeader = FlacHeader(peek.readByteString(4))
+
+            when (flacHeader.blockType) {
+                FlacHeader.BLOCK_TYPE_STREAMINFO -> {
+                    val flacStreamInfo = FlacStreamInfo(peek.readByteString(flacHeader.length))
+
+                    flacMrwFormat.apply {
+                        sampleRate = flacStreamInfo.sampleRate
+                        channelCount = flacStreamInfo.channelCount
+                        bits = flacStreamInfo.bits
+                        sampleCount = flacStreamInfo.sampleCount
+                    }
+                }
+
+                else -> {
+                    peek.skip(flacHeader.length.toLong())
+                }
+            }
+        } while (!flacHeader.isLastMetadataBlock)
+
+        peek.close()
+        return flacMrwFormat
     }
 
     companion object {

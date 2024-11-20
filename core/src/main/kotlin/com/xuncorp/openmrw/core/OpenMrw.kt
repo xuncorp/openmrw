@@ -15,16 +15,30 @@
  * 02110-1301 USA
  */
 
+@file:Suppress("unused")
+
 package com.xuncorp.openmrw.core
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
+import kotlinx.io.Source
 
 object OpenMrw {
 
-    fun read(): Result<MrwFormat> = runCatching {
+    private val readers by lazy {
+        listOf(
+            FlacMrwReader()
+        )
+    }
 
+    fun read(source: Source): Result<MrwFormat> = runCatching {
+        for (reader in readers) {
+            if (reader.match(source)) {
+                return@runCatching reader.fetch(source)
+            }
+        }
 
-        MrwFormat()
+        throw IllegalArgumentException("Unsupported source.")
     }
 
 }

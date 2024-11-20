@@ -44,9 +44,17 @@ internal class FlacHeader(byteString: ByteString) {
         const val BLOCK_TYPE_PICTURE = 6
         const val BLOCK_TYPE_INVALID = 127
     }
+
+    override fun toString(): String {
+        return "FlacHeader(isLastMetadataBlock=$isLastMetadataBlock, " +
+                "blockType=$blockType, " +
+                "length=$length)"
+    }
 }
 
 /**
+ * [FlacHeader.BLOCK_TYPE_STREAMINFO]
+ *
  * @param byteString 34 bytes.
  */
 internal class FlacStreamInfo(byteString: ByteString) {
@@ -100,5 +108,16 @@ internal class FlacStreamInfo(byteString: ByteString) {
             (byteString[16].toLong() and 0xFF shl 8) or
             (byteString[17].toLong() and 0xFF)
 
-    val unencodedAudioDataMd5 = byteString.substring(18, 35).decodeToString()
+    val unencodedAudioDataMd5 = byteString.substring(18, 34).decodeToString()
+}
+
+/**
+ * [FlacHeader.BLOCK_TYPE_VORBIS_COMMENT]
+ *
+ * FLAC tags
+ *
+ * [Ogg Vorbis](https://www.xiph.org/vorbis/doc/v-comment.html)
+ */
+internal class VorbisComment(byteString: ByteString) {
+
 }
