@@ -1,1 +1,3 @@
-# Open Metadata Reader Writer
+# OpenMrw
+
+OpenMrw (Open Metadata Reader Writer)
