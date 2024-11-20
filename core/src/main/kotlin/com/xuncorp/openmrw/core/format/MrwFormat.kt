@@ -15,16 +15,34 @@
  * 02110-1301 USA
  */
 
-package com.xuncorp.openmrw.core
+@file:Suppress("unused")
 
-import com.xuncorp.openmrw.core.format.MrwFormat
+package com.xuncorp.openmrw.core.format
 
-object OpenMrw {
+abstract class MrwFormat {
 
-    fun read(): Result<MrwFormat> = runCatching {
+    /**
+     * Sample rate.
+     */
+    var sampleRate = 0
+        internal set
 
+    /**
+     * Number of channels.
+     */
+    var channelCount = 0
+        internal set
 
-        MrwFormat()
-    }
+    /**
+     * Bits per sample.
+     */
+    var bits = 0
+        internal set
+
+    /**
+     * Total number of samples, irrespective of the number of channels.
+     */
+    var sampleCount = 0L
+        internal set
 
 }

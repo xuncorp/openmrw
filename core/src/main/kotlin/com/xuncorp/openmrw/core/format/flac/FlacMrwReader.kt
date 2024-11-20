@@ -15,16 +15,32 @@
  * 02110-1301 USA
  */
 
-package com.xuncorp.openmrw.core
+package com.xuncorp.openmrw.core.format.flac
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFormatType
+import com.xuncorp.openmrw.core.rw.MrwReader
+import kotlinx.io.Source
+import kotlinx.io.bytestring.ByteString
+import kotlinx.io.readByteString
 
-object OpenMrw {
-
-    fun read(): Result<MrwFormat> = runCatching {
-
-
-        MrwFormat()
+internal class FlacMrwReader : MrwReader(MrwFormatType.Flac) {
+    override fun match(source: Source): Boolean {
+        val peek = source.peek()
+        val magicHeader = peek.readByteString(4)
+        peek.close()
+        return magicHeader == MAGIC_HEADER
     }
 
+    override fun fetch(source: Source): MrwFormat {
+        val flacMrwFormat = FlacMrwFormat()
+
+        flacMrwFormat.sampleRate = 0
+
+        return FlacMrwFormat()
+    }
+
+    companion object {
+        private val MAGIC_HEADER = ByteString(0x66, 0x4C, 0x61, 0x43)
+    }
 }

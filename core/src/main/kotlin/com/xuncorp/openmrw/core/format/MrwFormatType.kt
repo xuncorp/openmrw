@@ -15,16 +15,11 @@
  * 02110-1301 USA
  */
 
-package com.xuncorp.openmrw.core
+package com.xuncorp.openmrw.core.format
 
-import com.xuncorp.openmrw.core.format.MrwFormat
-
-object OpenMrw {
-
-    fun read(): Result<MrwFormat> = runCatching {
-
-
-        MrwFormat()
-    }
-
+enum class MrwFormatType {
+    /**
+     * Free Lossless Audio Codec
+     */
+    Flac
 }

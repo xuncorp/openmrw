@@ -15,16 +15,27 @@
  * 02110-1301 USA
  */
 
-package com.xuncorp.openmrw.core
+@file:Suppress("unused")
+
+package com.xuncorp.openmrw.core.rw
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFormatType
+import kotlinx.io.Source
 
-object OpenMrw {
+/**
+ * A reader that can read a [MrwFormat] from a [Source].
+ */
+internal abstract class MrwReader(val type: MrwFormatType) {
 
-    fun read(): Result<MrwFormat> = runCatching {
+    /**
+     * Returns true if the reader matches the [source].
+     */
+    abstract fun match(source: Source): Boolean
 
-
-        MrwFormat()
-    }
+    /**
+     * Fetches the [MrwFormat] from the [source].
+     */
+    abstract fun fetch(source: Source): MrwFormat
 
 }
