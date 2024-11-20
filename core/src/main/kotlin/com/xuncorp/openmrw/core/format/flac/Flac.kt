@@ -15,12 +15,15 @@
  * 02110-1301 USA
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package com.xuncorp.openmrw.core.format.flac
 
+import kotlinx.io.Source
 import kotlinx.io.bytestring.ByteString
 import kotlinx.io.bytestring.decodeToString
+import kotlinx.io.readString
+import kotlinx.io.readUIntLe
 
 /**
  * @param byteString The first 4 bytes of the metadata block header.
@@ -114,10 +117,30 @@ internal class FlacStreamInfo(byteString: ByteString) {
 /**
  * [FlacHeader.BLOCK_TYPE_VORBIS_COMMENT]
  *
- * FLAC tags
+ * FLAC tags, without the framing bit
  *
  * [Ogg Vorbis](https://www.xiph.org/vorbis/doc/v-comment.html)
  */
-internal class VorbisComment(byteString: ByteString) {
+internal class FlacVorbisComment(source: Source) {
+    val vendorString: String
 
+    val userComments: List<String>
+
+    init {
+        val vendorLength = source.readUIntLe().toLong()
+        vendorString = source.readString(vendorLength)
+
+        val userCommentListLength = source.readUIntLe().toLong()
+        userComments = ArrayList(userCommentListLength.toInt())
+
+        for (i in 0 until userCommentListLength) {
+            val userCommentLength = source.readUIntLe().toLong()
+            val userComment = source.readString(userCommentLength)
+            userComments.add(userComment)
+        }
+    }
+
+    override fun toString(): String {
+        return "FlacVorbisComment(vendorString='$vendorString', userComments=$userComments)"
+    }
 }

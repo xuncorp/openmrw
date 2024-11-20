@@ -45,11 +45,15 @@ abstract class MrwFormat {
     var sampleCount = 0L
         internal set
 
+    /**
+     * [MrwComment]
+     */
+    val mrwComment = MrwComment()
+
     override fun toString(): String {
         return "MrwFormat(sampleRate=$sampleRate, " +
                 "channelCount=$channelCount, " +
                 "bits=$bits, " +
                 "sampleCount=$sampleCount)"
     }
-
 }

@@ -25,6 +25,37 @@ import kotlinx.io.bytestring.ByteString
 import kotlinx.io.readByteString
 
 internal class FlacMrwReader : MrwReader(MrwFormatType.Flac) {
+    private fun handleStreamInfo(
+        source: Source,
+        flacHeader: FlacHeader,
+        flacMrwFormat: FlacMrwFormat
+    ) {
+        val flacStreamInfo = FlacStreamInfo(source.readByteString(flacHeader.length))
+
+        flacMrwFormat.apply {
+            sampleRate = flacStreamInfo.sampleRate
+            channelCount = flacStreamInfo.channelCount
+            bits = flacStreamInfo.bits
+            sampleCount = flacStreamInfo.sampleCount
+        }
+    }
+
+    private fun handleVorbisComment(
+        source: Source,
+        flacMrwFormat: FlacMrwFormat
+    ) {
+        val flacVorbisComment = FlacVorbisComment(source)
+
+        flacVorbisComment.userComments.forEach { userComment ->
+            val parts = userComment.split('=', limit = 2)
+            if (parts.size == 2) {
+                val field = parts[0].trim()
+                val value = parts[1].trim()
+                flacMrwFormat.mrwComment.add(field, value)
+            }
+        }
+    }
+
     override fun match(source: Source): Boolean {
         val peek = source.peek()
         val magicHeader = peek.readByteString(4)
@@ -44,16 +75,13 @@ internal class FlacMrwReader : MrwReader(MrwFormatType.Flac) {
             flacHeader = FlacHeader(peek.readByteString(4))
 
             when (flacHeader.blockType) {
-                FlacHeader.BLOCK_TYPE_STREAMINFO -> {
-                    val flacStreamInfo = FlacStreamInfo(peek.readByteString(flacHeader.length))
+                FlacHeader.BLOCK_TYPE_STREAMINFO -> handleStreamInfo(
+                    peek,
+                    flacHeader,
+                    flacMrwFormat
+                )
 
-                    flacMrwFormat.apply {
-                        sampleRate = flacStreamInfo.sampleRate
-                        channelCount = flacStreamInfo.channelCount
-                        bits = flacStreamInfo.bits
-                        sampleCount = flacStreamInfo.sampleCount
-                    }
-                }
+                FlacHeader.BLOCK_TYPE_VORBIS_COMMENT -> handleVorbisComment(peek, flacMrwFormat)
 
                 else -> {
                     peek.skip(flacHeader.length.toLong())
