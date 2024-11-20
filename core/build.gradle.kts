@@ -18,4 +18,5 @@ kotlin {
 
 dependencies {
     testImplementation(libs.junit)
+    implementation(libs.kotlinx.io)
 }
