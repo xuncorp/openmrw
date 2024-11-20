@@ -15,7 +15,7 @@
  * 02110-1301 USA
  */
 
-@file:Suppress("UNUSED")
+@file:Suppress("unused")
 
 package com.xuncorp.openmrw.core
 
