@@ -8,7 +8,7 @@ OpenMrw (Open Metadata Reader Writer), A tool library for the JVM platform.
 
 # Project Structure Description
 
-The project primarily uses kotlinx-io for file operations, core code is located in the ‘core’ folder (module).
+The project primarily uses kotlinx-io for file operations, core code is located in the `core` folder (module).
 
 `OpenMrw.kt` is a singleton that directly parses files using the read method, and `UnstableOpenMrwApi.kt` is used to mark classes or methods as unstable.
 
