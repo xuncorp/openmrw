@@ -93,6 +93,9 @@ internal class FlacMrwReader : MrwReader() {
     }
 
     companion object {
+        /**
+         * "fLaC"
+         */
         private val MAGIC_HEADER = ByteString(0x66, 0x4C, 0x61, 0x43)
     }
 }
