@@ -6,7 +6,7 @@ OpenMrw (Open Metadata Reader Writer), A tool library for the JVM platform.
 - `Read` media files stream information, metadata, and other information.
 - `Write` media files metadata, and other information.
 
-# Project Structure Description
+## Project Structure
 
 The project primarily uses kotlinx-io for file operations, core code is located in the `core` folder (module).
 
