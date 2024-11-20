@@ -20,36 +20,36 @@ package com.xuncorp.openmrw.core.format.ape
 import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
-import kotlinx.io.bytestring.ByteString
-import kotlinx.io.readByteString
 
 internal class ApeMrwReader : MrwReader() {
     override fun match(source: Source): Boolean {
-        val peek = source.peek()
-        val magicHeader = peek.readByteString(4)
-        peek.close()
-        return magicHeader == MAGIC_HEADER
+        val apeCommonHeader = ApeCommonHeader(source)
+        return apeCommonHeader.id == ApeCommonHeader.ID_MAC ||
+                apeCommonHeader.id == ApeCommonHeader.ID_MACF
     }
 
     override fun fetch(source: Source): MrwFormat {
-        val peek = source.peek()
         val apeMrwFormat = ApeMrwFormat()
 
-        val apeCommonHeader = ApeCommonHeader(peek)
-        println(
-            """
-                version = ${apeCommonHeader.version}
-            """.trimIndent()
-        )
+        source.peek().use { peek ->
+            val apeCommonHeader = ApeCommonHeader(peek)
+            val version = apeCommonHeader.version
 
-        peek.close()
+            if (version > 3970u) {
+                val apeDescriptor = ApeDescriptor(peek)
+                // TODO
+                println(apeDescriptor)
+            } else {
+                // old header
+                val apeHeaderOld = ApeHeaderOld(peek)
+                apeMrwFormat.mrwStreamInfo.apply {
+                    sampleRate = apeHeaderOld.sampleRate.toInt()
+                    channelCount = apeHeaderOld.channels.toInt()
+                    sampleCount = apeHeaderOld.totalFrames.toLong()
+                }
+            }
+        }
+
         return apeMrwFormat
-    }
-
-    companion object {
-        /**
-         * "MAC "
-         */
-        val MAGIC_HEADER = ByteString(0x4D, 0x41, 0x43, 0x20)
     }
 }

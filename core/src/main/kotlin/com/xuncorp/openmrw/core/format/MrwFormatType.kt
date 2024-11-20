@@ -21,7 +21,7 @@ package com.xuncorp.openmrw.core.format
 
 enum class MrwFormatType {
     /**
-     * Free Lossless Audio Codec
+     * # Free Lossless Audio Codec
      */
     Flac,
 

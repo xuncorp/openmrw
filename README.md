@@ -9,6 +9,12 @@ OpenMrw (Open Metadata Reader Writer), a tool library for the JVM platform.
 **This project is still in a very early stage and is not recommended for use in production
 environments.**
 
+## Media Format Support
+
+FLAC, APE.
+
+See [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormatType.kt).
+
 ## Project Structure
 
 The project core code is located in the [core](core) folder (module).
