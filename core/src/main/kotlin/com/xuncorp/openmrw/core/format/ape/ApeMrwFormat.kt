@@ -17,30 +17,9 @@
 
 @file:Suppress("unused")
 
-package com.xuncorp.openmrw.core
+package com.xuncorp.openmrw.core.format.ape
 
 import com.xuncorp.openmrw.core.format.MrwFormat
-import com.xuncorp.openmrw.core.format.ape.ApeMrwReader
-import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
-import kotlinx.io.Source
+import com.xuncorp.openmrw.core.format.MrwFormatType
 
-object OpenMrw {
-
-    private val readers by lazy {
-        listOf(
-            FlacMrwReader(),
-            ApeMrwReader()
-        )
-    }
-
-    fun read(source: Source): Result<MrwFormat> = runCatching {
-        for (reader in readers) {
-            if (reader.match(source)) {
-                return@runCatching reader.fetch(source)
-            }
-        }
-
-        throw IllegalArgumentException("Unsupported source.")
-    }
-
-}
+class ApeMrwFormat : MrwFormat(MrwFormatType.Ape)

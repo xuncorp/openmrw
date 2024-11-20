@@ -15,11 +15,20 @@
  * 02110-1301 USA
  */
 
+@file:Suppress("unused")
+
 package com.xuncorp.openmrw.core.format
 
 enum class MrwFormatType {
     /**
      * Free Lossless Audio Codec
      */
-    Flac
+    Flac,
+
+    /**
+     * # Monkey's Audio
+     *
+     * [Official Site](https://monkeysaudio.com/)
+     */
+    Ape
 }
