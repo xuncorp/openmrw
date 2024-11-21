@@ -22,6 +22,8 @@ package com.xuncorp.openmrw.core.format
 enum class MrwFormatType {
     /**
      * # Free Lossless Audio Codec
+     *
+     * @since 0.1.0 2024/11/20
      */
     Flac,
 
@@ -29,11 +31,15 @@ enum class MrwFormatType {
      * # Monkey's Audio
      *
      * [Official Site](https://monkeysaudio.com/)
+     *
+     * @since 0.1.0 2024/11/20
      */
     Ape,
 
     /**
      * # MPEG-1 Audio Layer 3
+     *
+     * @since 0.1.0 2024/11/21
      */
     Mp3
 }
