@@ -43,21 +43,16 @@ internal class ApeMrwReader : MrwReader() {
                     sampleRate = apeHeader.sampleRate.toInt()
                     channelCount = apeHeader.channels.toInt()
                     bits = apeHeader.bitsPerSample.toInt()
-                    sampleCount = if (apeHeader.totalFrames == 0u) {
-                        0L
-                    } else {
-                        (apeHeader.totalFrames.toLong() - 1) *
-                                apeHeader.blocksPerFrame.toLong() +
-                                apeHeader.finalFrameBlocks.toLong()
-                    }
+                    sampleCount = apeHeader.sampleCount
                 }
-                println(apeHeader)
             } else {
                 // old header
                 val apeHeaderOld = ApeHeaderOld(peek)
                 apeMrwFormat.mrwStreamInfo.apply {
                     sampleRate = apeHeaderOld.sampleRate.toInt()
                     channelCount = apeHeaderOld.channels.toInt()
+                    bits = apeHeaderOld.bits
+                    sampleCount = apeHeaderOld.sampleCount
                 }
             }
         }

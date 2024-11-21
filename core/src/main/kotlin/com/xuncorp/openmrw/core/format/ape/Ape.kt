@@ -25,6 +25,22 @@ import kotlinx.io.readByteString
 import kotlinx.io.readUIntLe
 import kotlinx.io.readUShortLe
 
+private const val APE_COMPRESSION_LEVEL_FAST: UShort = 1000u
+private const val APE_COMPRESSION_LEVEL_NORMAL: UShort = 2000u
+private const val APE_COMPRESSION_LEVEL_HIGH: UShort = 3000u
+private const val APE_COMPRESSION_LEVEL_EXTRA_HIGH: UShort = 4000u
+private const val APE_COMPRESSION_LEVEL_INSANE: UShort = 5000u
+
+private const val APE_FORMAT_FLAG_8_BIT = 1 shl 0
+private const val APE_FORMAT_FLAG_CRC = 1 shl 1
+private const val APE_FORMAT_FLAG_HAS_PEAK_LEVEL = 1 shl 2
+private const val APE_FORMAT_FLAG_24_BIT = 1 shl 3
+private const val APE_FORMAT_FLAG_HAS_SEEK_ELEMENTS = 1 shl 4
+private const val APE_FORMAT_FLAG_CREATE_WAV_HEADER = 1 shl 5
+private const val APE_FORMAT_FLAG_AIFF = 1 shl 6
+private const val APE_FORMAT_FLAG_W64 = 1 shl 7
+private const val APE_FORMAT_FLAG_SND = 1 shl 8
+
 /**
  * Peek new source.
  */
@@ -71,6 +87,34 @@ internal class ApeHeaderOld(source: Source) {
     val totalFrames = source.readUIntLe()
     val finalFrameBlocks = source.readUIntLe()
 
+    /**
+     * The number of audio blocks in one frame
+     */
+    val blocksPerFrame =
+        if ((version >= 3900u) ||
+            (version >= 3800u && compressionLevel == APE_COMPRESSION_LEVEL_EXTRA_HIGH)
+        ) {
+            73728
+        } else {
+            9216
+        }
+
+    val bits =
+        if (formatFlags.toInt() and APE_FORMAT_FLAG_8_BIT != 0) {
+            8
+        } else if (formatFlags.toInt() and APE_FORMAT_FLAG_24_BIT != 0) {
+            24
+        } else {
+            16
+        }
+
+    val sampleCount =
+        if (totalFrames == 0u) {
+            0L
+        } else {
+            (totalFrames.toLong() - 1L) * blocksPerFrame.toLong() + finalFrameBlocks.toLong()
+        }
+
     override fun toString(): String {
         return "ApeHeaderOld(id=$id, version=$version, compressionLevel=$compressionLevel, " +
                 "formatFlags=$formatFlags, channels=$channels, sampleRate=$sampleRate, " +
@@ -105,12 +149,24 @@ internal class ApeDescriptor(source: Source) {
 internal class ApeHeader(source: Source) {
     val compressionLevel = source.readUShortLe()
     val formatFlags = source.readUShortLe()
+
+    /**
+     * The number of audio blocks in one frame
+     */
     val blocksPerFrame = source.readUIntLe()
+
     val finalFrameBlocks = source.readUIntLe()
     val totalFrames = source.readUIntLe()
     val bitsPerSample = source.readUShortLe()
     val channels = source.readUShortLe()
     val sampleRate = source.readUIntLe()
+
+    val sampleCount =
+        if (totalFrames == 0u) {
+            0L
+        } else {
+            (totalFrames.toLong() - 1L) * blocksPerFrame.toLong() + finalFrameBlocks.toLong()
+        }
 
     override fun toString(): String {
         return "ApeHeader(compressionLevel=$compressionLevel, formatFlags=$formatFlags, " +
