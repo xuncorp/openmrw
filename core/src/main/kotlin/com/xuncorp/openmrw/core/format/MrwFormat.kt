@@ -29,4 +29,9 @@ abstract class MrwFormat(val mrwFormatType: MrwFormatType) {
      * [MrwComment]
      */
     val mrwComment = MrwComment()
+
+    override fun toString(): String {
+        return "MrwFormat(mrwFormatType=$mrwFormatType, mrwStreamInfo=$mrwStreamInfo, " +
+                "mrwComment=$mrwComment)"
+    }
 }

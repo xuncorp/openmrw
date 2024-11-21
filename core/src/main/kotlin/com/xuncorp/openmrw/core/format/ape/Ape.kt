@@ -101,3 +101,21 @@ internal class ApeDescriptor(source: Source) {
                 "terminatingDataBytes=$terminatingDataBytes, fileMd5=$fileMd5)"
     }
 }
+
+internal class ApeHeader(source: Source) {
+    val compressionLevel = source.readUShortLe()
+    val formatFlags = source.readUShortLe()
+    val blocksPerFrame = source.readUIntLe()
+    val finalFrameBlocks = source.readUIntLe()
+    val totalFrames = source.readUIntLe()
+    val bitsPerSample = source.readUShortLe()
+    val channels = source.readUShortLe()
+    val sampleRate = source.readUIntLe()
+
+    override fun toString(): String {
+        return "ApeHeader(compressionLevel=$compressionLevel, formatFlags=$formatFlags, " +
+                "blocksPerFrame=$blocksPerFrame, finalFrameBlocks=$finalFrameBlocks, " +
+                "totalFrames=$totalFrames, bitsPerSample=$bitsPerSample, channels=$channels, " +
+                "sampleRate=$sampleRate)"
+    }
+}

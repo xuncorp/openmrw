@@ -17,14 +17,16 @@ See [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwF
 
 ## Project Structure
 
-The project core code is located in the [core](core) folder (module).
+The project core code is located in the [core](core/src/main/kotlin/com/xuncorp/openmrw/core)
+folder.
 
 [OpenMrw.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/OpenMrw.kt) is a singleton that directly
 parses files using the read method.
 
 - [format](core/src/main/kotlin/com/xuncorp/openmrw/core/format) folder contains the handling of
   various file types.
-    - flac
+    - [ape](core/src/main/kotlin/com/xuncorp/openmrw/core/format/ape) Monkey's Audio.
+    - [flac](core/src/main/kotlin/com/xuncorp/openmrw/core/format/flac) Free Lossless Audio Codec.
     - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for
       audio tag information; for instance, FLAC comments read will be converted into this.
     - [MrwFormat.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormat.kt) is an

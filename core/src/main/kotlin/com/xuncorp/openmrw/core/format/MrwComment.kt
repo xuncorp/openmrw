@@ -44,6 +44,10 @@ class MrwComment {
     fun getAll(): List<Pair<String, String>> {
         return comments
     }
+
+    override fun toString(): String {
+        return "MrwComment(comments=$comments)"
+    }
 }
 
 enum class MrwCommentField(val field: String) {

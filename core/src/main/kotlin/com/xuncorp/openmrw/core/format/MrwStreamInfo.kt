@@ -15,6 +15,8 @@
  * 02110-1301 USA
  */
 
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.xuncorp.openmrw.core.format
 
 class MrwStreamInfo {
@@ -22,7 +24,10 @@ class MrwStreamInfo {
      * Sample rate.
      */
     var sampleRate = 0
-        internal set
+        internal set(value) {
+            field = value
+            durationMillis = calcDurationMillis()
+        }
 
     /**
      * Number of channels.
@@ -40,5 +45,27 @@ class MrwStreamInfo {
      * Total number of samples, irrespective of the number of channels.
      */
     var sampleCount = 0L
-        internal set
+        internal set(value) {
+            field = value
+            durationMillis = calcDurationMillis()
+        }
+
+    /**
+     * Duration in milliseconds.
+     */
+    var durationMillis: Long = 0L
+        private set
+
+    private fun calcDurationMillis(): Long {
+        return if (sampleRate == 0) {
+            0L
+        } else {
+            sampleCount * 1000 / sampleRate
+        }
+    }
+
+    override fun toString(): String {
+        return "MrwStreamInfo(sampleRate=$sampleRate, channelCount=$channelCount, bits=$bits, " +
+                "sampleCount=$sampleCount, durationMillis=$durationMillis)"
+    }
 }
