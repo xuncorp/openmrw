@@ -30,5 +30,10 @@ enum class MrwFormatType {
      *
      * [Official Site](https://monkeysaudio.com/)
      */
-    Ape
+    Ape,
+
+    /**
+     * # MPEG-1 Audio Layer 3
+     */
+    Mp3
 }

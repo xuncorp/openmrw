@@ -15,28 +15,21 @@
  * 02110-1301 USA
  */
 
-@file:Suppress("unused")
-
-package com.xuncorp.openmrw.core.rw
+package com.xuncorp.openmrw.core.format.mp3
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
 
-/**
- * A reader that can read a [MrwFormat] from a [Source].
- */
-internal abstract class MrwReader {
+internal class Mp3MrwReader : MrwReader() {
+    override fun match(source: Source) = runCatching {
+        source.peek().use { peek ->
+            Id3v2Header(peek)
+        }
+    }
 
-    /**
-     * Returns true if the reader matches the [source].
-     *
-     * Throw an exception if the match fails.
-     */
-    abstract fun match(source: Source): Result<Any>
-
-    /**
-     * Fetches the [MrwFormat] from the [source].
-     */
-    abstract fun fetch(source: Source): MrwFormat
-
+    override fun fetch(source: Source): MrwFormat {
+        val mp3MrwFormat = Mp3MrwFormat()
+        return mp3MrwFormat
+    }
 }

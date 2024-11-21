@@ -17,26 +17,9 @@
 
 @file:Suppress("unused")
 
-package com.xuncorp.openmrw.core.rw
+package com.xuncorp.openmrw.core.format.mp3
 
 import com.xuncorp.openmrw.core.format.MrwFormat
-import kotlinx.io.Source
+import com.xuncorp.openmrw.core.format.MrwFormatType
 
-/**
- * A reader that can read a [MrwFormat] from a [Source].
- */
-internal abstract class MrwReader {
-
-    /**
-     * Returns true if the reader matches the [source].
-     *
-     * Throw an exception if the match fails.
-     */
-    abstract fun match(source: Source): Result<Any>
-
-    /**
-     * Fetches the [MrwFormat] from the [source].
-     */
-    abstract fun fetch(source: Source): MrwFormat
-
-}
+class Mp3MrwFormat : MrwFormat(MrwFormatType.Mp3)
