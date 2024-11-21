@@ -28,6 +28,7 @@ parses files using the read method.
     - [ape](core/src/main/kotlin/com/xuncorp/openmrw/core/format/ape) Monkey's Audio.
     - [flac](core/src/main/kotlin/com/xuncorp/openmrw/core/format/flac) Free Lossless Audio Codec.
     - [mp3](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3) MPEG-1 Audio Layer 3.
+      - [Id3v2.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3/Id3v2.kt) ID3v2 tags.
     - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for
       audio tag information; for instance, FLAC comments read will be converted into this.
     - [MrwFormat.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormat.kt) is an
