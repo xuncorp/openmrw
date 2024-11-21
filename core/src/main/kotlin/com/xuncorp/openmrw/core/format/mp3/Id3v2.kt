@@ -93,10 +93,10 @@ internal class Id3v2Header(source: Source) {
 }
 
 /**
- * Extended header size   $xx xx xx xx
- * Extended Flags         $xx xx
- * Size of padding        $xx xx xx xx
- * Total Frame CRC        $xx xx xx xx (Optional)
+ * - Extended Header Size: $xx xx xx xx
+ * - Extended Flags: $xx xx
+ * - Size of Padding: $xx xx xx xx
+ * - Total Frame CRC: $xx xx xx xx (Optional)
  */
 internal class Id3v2ExtendedHeader(source: Source) {
     /**
