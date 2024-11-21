@@ -23,12 +23,17 @@ import kotlinx.io.Source
 
 internal class Mp3MrwReader : MrwReader() {
     override fun match(source: Source) {
-        val id3v2Header = Id3v2Header(source)
-        println(id3v2Header)
+        Id3v2Header(source)
     }
 
     override fun fetch(source: Source): MrwFormat {
         val mp3MrwFormat = Mp3MrwFormat()
+
+        val id3v2Header = Id3v2Header(source)
+        if (id3v2Header.extendedHeader) {
+            Id3v2ExtendedHeader(source)
+        }
+
         return mp3MrwFormat
     }
 }

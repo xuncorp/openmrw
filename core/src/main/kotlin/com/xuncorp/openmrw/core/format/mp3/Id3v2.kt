@@ -91,3 +91,36 @@ internal class Id3v2Header(source: Source) {
                 "revision=$revision, flags=$flags, size=$size)"
     }
 }
+
+/**
+ * Extended header size   $xx xx xx xx
+ * Extended Flags         $xx xx
+ * Size of padding        $xx xx xx xx
+ * Total Frame CRC        $xx xx xx xx (Optional)
+ */
+internal class Id3v2ExtendedHeader(source: Source) {
+    /**
+     * Where the 'Extended header size', currently 6 or 10 bytes, excludes itself.
+     */
+    val extendedHeaderSize = source.readUInt()
+
+    val extendedFlags = source.readByteString(2)
+
+    val sizeOfPadding = source.readUInt()
+
+    /**
+     * If this flag is set four bytes of CRC-32 data is appended to the extended header.
+     */
+    val crcDataPresent = extendedFlags[0].toInt() and 0x80 != 0
+
+    val totalFrameCrc: ByteString =
+        if (crcDataPresent) {
+            source.readByteString(4)
+        } else {
+            ByteString()
+        }
+}
+
+internal class Id3v2Frame(source: Source) {
+
+}
