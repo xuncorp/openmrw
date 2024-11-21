@@ -22,6 +22,7 @@ package com.xuncorp.openmrw.core
 import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.format.ape.ApeMrwReader
 import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
+import com.xuncorp.openmrw.core.format.mp3.Mp3MrwReader
 import kotlinx.io.Source
 
 object OpenMrw {
@@ -29,7 +30,8 @@ object OpenMrw {
     private val readers by lazy {
         listOf(
             FlacMrwReader(),
-            ApeMrwReader()
+            ApeMrwReader(),
+            Mp3MrwReader()
         )
     }
 
