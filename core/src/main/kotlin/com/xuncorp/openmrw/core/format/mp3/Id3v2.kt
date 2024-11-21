@@ -47,17 +47,47 @@ internal class Id3v2Header(source: Source) {
      */
     val revision = source.readByte().toInt() and 0xFF
 
+    /**
+     * %abc00000
+     * - a: [unSynchronisation]
+     * - b: [extendedHeader]
+     * - c: [experimentalIndicator]
+     */
     val flags = source.readByte()
 
     /**
-     * The ID3v2 tag size is the size of the complete tag after unsychronisation, including padding,
-     * excluding the header but not excluding the extended header (total tag size - 10). Only 28
-     * bits (representing up to 256MB) are used in the size description to avoid the introduction
-     * of 'false syncsignals'.
+     * The ID3v2tag size (bytes) is the size of the complete tag after un synchronisation,
+     * including padding, excluding the header but not excluding the extended header
+     * (total tag size - 10).
+     *
+     * Only 28 bits (representing up to 256MB) are used in the size description to avoid the
+     * introduction of 'false sync signals'.
      */
     val size = source.readUInt()
 
+    /**
+     * Bit 7 in the 'ID3v2 flags' indicates whether or not un synchronisation is used
+     * (see section 5 for details); a set bit indicates usage.
+     */
+    val unSynchronisation = flags.toInt() and 0x80 != 0
+
+    /**
+     * The second bit (bit 6) indicates whether or not the header is followed by an extended header.
+     */
+    val extendedHeader = flags.toInt() and 0x40 != 0
+
+    /**
+     * The third bit (bit 5) should be used as an 'experimental indicator'. This flag should always
+     * be set when the tag is in an experimental stage.
+     */
+    val experimentalIndicator = flags.toInt() and 0x20 != 0
+
     init {
         require(identifier == ByteString(0x49, 0x44, 0x33))
+    }
+
+    override fun toString(): String {
+        return "Id3v2Header(identifier=$identifier, majorVersion=$majorVersion, " +
+                "revision=$revision, flags=$flags, size=$size)"
     }
 }
