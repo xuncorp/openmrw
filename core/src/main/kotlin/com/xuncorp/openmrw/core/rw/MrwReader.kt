@@ -32,7 +32,7 @@ internal abstract class MrwReader {
      *
      * Throw an exception if the match fails.
      */
-    abstract fun match(source: Source): Result<Any>
+    abstract fun match(source: Source)
 
     /**
      * Fetches the [MrwFormat] from the [source].

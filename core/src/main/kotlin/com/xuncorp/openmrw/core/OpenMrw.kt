@@ -35,8 +35,19 @@ object OpenMrw {
 
     fun read(source: Source): Result<MrwFormat> = runCatching {
         for (reader in readers) {
-            if (reader.match(source).getOrNull() != null) {
-                return@runCatching reader.fetch(source)
+            val matched = source.peek().use { matchSource ->
+                try {
+                    reader.match(matchSource)
+                    true
+                } catch (_: Exception) {
+                    false
+                }
+            }
+
+            if (matched) {
+                source.peek().use { fetchSource ->
+                    return@runCatching reader.fetch(fetchSource)
+                }
             }
         }
 

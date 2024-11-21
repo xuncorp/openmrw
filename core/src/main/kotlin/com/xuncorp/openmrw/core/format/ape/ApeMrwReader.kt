@@ -22,7 +22,7 @@ import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
 
 internal class ApeMrwReader : MrwReader() {
-    override fun match(source: Source) = runCatching {
+    override fun match(source: Source) {
         val apeCommonHeader = ApeCommonHeader(source)
         require(
             apeCommonHeader.id == ApeCommonHeader.ID_MAC ||
@@ -30,16 +30,16 @@ internal class ApeMrwReader : MrwReader() {
         )
     }
 
-    override fun fetch(source: Source): MrwFormat = source.peek().use { peek ->
+    override fun fetch(source: Source): MrwFormat {
         val apeMrwFormat = ApeMrwFormat()
 
-        val apeCommonHeader = ApeCommonHeader(peek)
+        val apeCommonHeader = ApeCommonHeader(source.peek())
         val version = apeCommonHeader.version
 
         if (version > 3970u) {
-            ApeDescriptor(peek)
+            ApeDescriptor(source)
             // new header
-            val apeHeader = ApeHeader(peek)
+            val apeHeader = ApeHeader(source)
             apeMrwFormat.mrwStreamInfo.apply {
                 sampleRate = apeHeader.sampleRate.toInt()
                 channelCount = apeHeader.channels.toInt()
@@ -48,7 +48,7 @@ internal class ApeMrwReader : MrwReader() {
             }
         } else {
             // old header
-            val apeHeaderOld = ApeHeaderOld(peek)
+            val apeHeaderOld = ApeHeaderOld(source)
             apeMrwFormat.mrwStreamInfo.apply {
                 sampleRate = apeHeaderOld.sampleRate.toInt()
                 channelCount = apeHeaderOld.channels.toInt()

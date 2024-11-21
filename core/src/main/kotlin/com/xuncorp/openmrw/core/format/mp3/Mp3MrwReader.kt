@@ -22,10 +22,8 @@ import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
 
 internal class Mp3MrwReader : MrwReader() {
-    override fun match(source: Source) = runCatching {
-        source.peek().use { peek ->
-            Id3v2Header(peek)
-        }
+    override fun match(source: Source) {
+        Id3v2Header(source)
     }
 
     override fun fetch(source: Source): MrwFormat {
