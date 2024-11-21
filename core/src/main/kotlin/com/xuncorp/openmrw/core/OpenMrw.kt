@@ -26,7 +26,6 @@ import com.xuncorp.openmrw.core.format.mp3.Mp3MrwReader
 import kotlinx.io.Source
 
 object OpenMrw {
-
     private val readers by lazy {
         listOf(
             FlacMrwReader(),
@@ -35,6 +34,7 @@ object OpenMrw {
         )
     }
 
+    @UnstableOpenMrwApi
     fun read(source: Source): Result<MrwFormat> = runCatching {
         for (reader in readers) {
             val matched = source.peek().use { matchSource ->
@@ -55,5 +55,4 @@ object OpenMrw {
 
         throw IllegalArgumentException("Unsupported source.")
     }
-
 }
