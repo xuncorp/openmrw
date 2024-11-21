@@ -35,7 +35,7 @@ object OpenMrw {
 
     fun read(source: Source): Result<MrwFormat> = runCatching {
         for (reader in readers) {
-            if (reader.match(source)) {
+            if (reader.match(source).getOrNull() != null) {
                 return@runCatching reader.fetch(source)
             }
         }

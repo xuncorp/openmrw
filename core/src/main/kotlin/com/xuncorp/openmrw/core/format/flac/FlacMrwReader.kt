@@ -55,15 +55,14 @@ internal class FlacMrwReader : MrwReader() {
         }
     }
 
-    override fun match(source: Source): Boolean {
-        val peek = source.peek()
-        val magicHeader = peek.readByteString(4)
-        peek.close()
-        return magicHeader == MAGIC_HEADER
+    override fun match(source: Source) = runCatching {
+        source.peek().use { peek ->
+            val magicHeader = peek.readByteString(4)
+            require(magicHeader == MAGIC_HEADER)
+        }
     }
 
-    override fun fetch(source: Source): MrwFormat {
-        val peek = source.peek()
+    override fun fetch(source: Source): MrwFormat = source.peek().use { peek ->
         val flacMrwFormat = FlacMrwFormat()
 
         // Skip magic header
@@ -88,7 +87,6 @@ internal class FlacMrwReader : MrwReader() {
             }
         } while (!flacHeader.isLastMetadataBlock)
 
-        peek.close()
         return flacMrwFormat
     }
 

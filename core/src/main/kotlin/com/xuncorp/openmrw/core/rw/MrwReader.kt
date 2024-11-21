@@ -29,8 +29,10 @@ internal abstract class MrwReader {
 
     /**
      * Returns true if the reader matches the [source].
+     *
+     * Throw an exception if the match fails.
      */
-    abstract fun match(source: Source): Boolean
+    abstract fun match(source: Source): Result<Unit>
 
     /**
      * Fetches the [MrwFormat] from the [source].

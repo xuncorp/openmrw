@@ -22,38 +22,38 @@ import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
 
 internal class ApeMrwReader : MrwReader() {
-    override fun match(source: Source): Boolean {
+    override fun match(source: Source) = runCatching {
         val apeCommonHeader = ApeCommonHeader(source)
-        return apeCommonHeader.id == ApeCommonHeader.ID_MAC ||
-                apeCommonHeader.id == ApeCommonHeader.ID_MACF
+        require(
+            apeCommonHeader.id == ApeCommonHeader.ID_MAC ||
+                    apeCommonHeader.id == ApeCommonHeader.ID_MACF
+        )
     }
 
-    override fun fetch(source: Source): MrwFormat {
+    override fun fetch(source: Source): MrwFormat = source.peek().use { peek ->
         val apeMrwFormat = ApeMrwFormat()
 
-        source.peek().use { peek ->
-            val apeCommonHeader = ApeCommonHeader(peek)
-            val version = apeCommonHeader.version
+        val apeCommonHeader = ApeCommonHeader(peek)
+        val version = apeCommonHeader.version
 
-            if (version > 3970u) {
-                ApeDescriptor(peek)
-                // new header
-                val apeHeader = ApeHeader(peek)
-                apeMrwFormat.mrwStreamInfo.apply {
-                    sampleRate = apeHeader.sampleRate.toInt()
-                    channelCount = apeHeader.channels.toInt()
-                    bits = apeHeader.bitsPerSample.toInt()
-                    sampleCount = apeHeader.sampleCount
-                }
-            } else {
-                // old header
-                val apeHeaderOld = ApeHeaderOld(peek)
-                apeMrwFormat.mrwStreamInfo.apply {
-                    sampleRate = apeHeaderOld.sampleRate.toInt()
-                    channelCount = apeHeaderOld.channels.toInt()
-                    bits = apeHeaderOld.bits
-                    sampleCount = apeHeaderOld.sampleCount
-                }
+        if (version > 3970u) {
+            ApeDescriptor(peek)
+            // new header
+            val apeHeader = ApeHeader(peek)
+            apeMrwFormat.mrwStreamInfo.apply {
+                sampleRate = apeHeader.sampleRate.toInt()
+                channelCount = apeHeader.channels.toInt()
+                bits = apeHeader.bitsPerSample.toInt()
+                sampleCount = apeHeader.sampleCount
+            }
+        } else {
+            // old header
+            val apeHeaderOld = ApeHeaderOld(peek)
+            apeMrwFormat.mrwStreamInfo.apply {
+                sampleRate = apeHeaderOld.sampleRate.toInt()
+                channelCount = apeHeaderOld.channels.toInt()
+                bits = apeHeaderOld.bits
+                sampleCount = apeHeaderOld.sampleCount
             }
         }
 
