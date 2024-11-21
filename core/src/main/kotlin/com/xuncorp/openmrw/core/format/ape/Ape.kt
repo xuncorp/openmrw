@@ -41,19 +41,9 @@ private const val APE_FORMAT_FLAG_AIFF = 1 shl 6
 private const val APE_FORMAT_FLAG_W64 = 1 shl 7
 private const val APE_FORMAT_FLAG_SND = 1 shl 8
 
-/**
- * Peek new source.
- */
 internal class ApeCommonHeader(source: Source) {
-    val id: ByteString
-    val version: UShort
-
-    init {
-        source.peek().use { peek ->
-            id = peek.readByteString(4)
-            version = peek.readUShortLe()
-        }
-    }
+    val id = source.readByteString(4)
+    val version = source.readUShortLe()
 
     companion object {
         /**
