@@ -238,7 +238,7 @@ internal class Id3v2FrameHeader(source: Source) {
 }
 
 @Suppress("SpellCheckingInspection")
-internal object Id3v2DeclaredFrame {
+internal object Id3v2DeclaredFrames {
     /**
      * Audio encryption
      */
