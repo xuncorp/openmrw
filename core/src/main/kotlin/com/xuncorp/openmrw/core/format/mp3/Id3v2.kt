@@ -219,12 +219,19 @@ internal class Id3v2FrameHeader(source: Source) {
     fun getTextInformation(source: Source): String {
         require(frameType == FrameType.TextInformation)
         val textEncoding = source.readByte()
-        val charset = when (textEncoding.toInt()) {
-            0x00 -> Charsets.ISO_8859_1
-            0x01 -> Charsets.UTF_16
+        // Terminated strings are terminated with $00 if encoded with ISO-8859-1 and $00 00 if
+        //   encoded as unicode.
+        val (charset, endByteSize) = when (textEncoding.toInt()) {
+            0x00 -> Pair(Charsets.ISO_8859_1, 1)
+            0x01 -> Pair(Charsets.UTF_16, 2)
             else -> throw IllegalArgumentException("Invalid text encoding: $textEncoding")
         }
-        return source.readString(frameSize.toLong() - 1L, charset)
+        val textInformation = source.readString(
+            byteCount = frameSize.toLong() - 1L - endByteSize,
+            charset = charset
+        )
+        source.skip(endByteSize.toLong())
+        return textInformation
     }
 
     enum class FrameType {
