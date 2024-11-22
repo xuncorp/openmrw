@@ -19,6 +19,7 @@
 
 package com.xuncorp.openmrw.core.format
 
+import com.xuncorp.openmrw.core.UnstableOpenMrwApi
 import com.xuncorp.openmrw.core.format.mp3.Id3v2DeclaredFrames
 
 class MrwComment {
@@ -43,6 +44,7 @@ class MrwComment {
      * Returns the comment value of the specified [MrwCommentField], multiple original fields will
      * be merged, separated by [MrwCommentField.SEPARATOR].
      */
+    @UnstableOpenMrwApi
     fun get(mrwCommentField: MrwCommentField): String {
         return comments
             .filter { it.first in mrwCommentField.field }
