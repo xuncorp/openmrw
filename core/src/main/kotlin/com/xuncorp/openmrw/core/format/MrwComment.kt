@@ -19,6 +19,8 @@
 
 package com.xuncorp.openmrw.core.format
 
+import com.xuncorp.openmrw.core.format.mp3.Id3v2DeclaredFrames
+
 class MrwComment {
     /**
      * The comment fields.
@@ -37,8 +39,16 @@ class MrwComment {
         return comments.filter { it.first == field }.map { it.second }
     }
 
-    fun get(mrwCommentField: MrwCommentField): List<String> {
-        return get(mrwCommentField.field)
+    /**
+     * Returns the comment value of the specified [MrwCommentField], multiple original fields will
+     * be merged, separated by [MrwCommentField.SEPARATOR].
+     */
+    fun get(mrwCommentField: MrwCommentField): String {
+        return comments
+            .filter { it.first in mrwCommentField.field }
+            // TODO: Is it only the artist and genre fields that should be concatenated with
+            //   delimiters, while other fields are allowed only one value?
+            .joinToString(MrwCommentField.SEPARATOR) { it.second }
     }
 
     fun getAll(): List<Pair<String, String>> {
@@ -50,11 +60,27 @@ class MrwComment {
     }
 }
 
-enum class MrwCommentField(val field: String) {
-    Title("TITLE"),
-    Artist("ARTIST"),
-    Album("ALBUM"),
-    AlbumArtist("ALBUMARTIST"),
-    Genre("GENRE"),
-    Lyrics("LYRICS")
+enum class MrwCommentField(vararg val field: String) {
+    Title(MrwCommentCommonFields.TITLE, Id3v2DeclaredFrames.TIT2),
+    Artist(MrwCommentCommonFields.ARTIST, Id3v2DeclaredFrames.TPE1),
+    Album(MrwCommentCommonFields.ALBUM, Id3v2DeclaredFrames.TALB),
+    AlbumArtist(MrwCommentCommonFields.ALBUMARTIST),
+    Genre(MrwCommentCommonFields.GENRE),
+    Lyrics(MrwCommentCommonFields.LYRICS);
+
+    companion object {
+        const val SEPARATOR = "/"
+    }
+}
+
+/**
+ * Common fields used in most formats.
+ */
+object MrwCommentCommonFields {
+    const val TITLE = "TITLE"
+    const val ARTIST = "ARTIST"
+    const val ALBUM = "ALBUM"
+    const val ALBUMARTIST = "ALBUMARTIST"
+    const val GENRE = "GENRE"
+    const val LYRICS = "LYRICS"
 }
