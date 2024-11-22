@@ -45,7 +45,7 @@ internal class Id3v2Header(source: Source) {
      * - 3: ID3v2.3.0
      * - 4: ID3v2.4.0
      */
-    val majorVersion = source.readByte().toInt() and 0xFF
+    val version = source.readByte().toInt() and 0xFF
 
     /**
      * 1 byte.
@@ -98,7 +98,7 @@ internal class Id3v2Header(source: Source) {
      * ID3v2.4.0 only.
      */
     fun footerPresent(): Boolean {
-        require(majorVersion == 4)
+        require(version == 4)
         return flags.toInt() and 0x10 != 0
     }
 
@@ -107,7 +107,7 @@ internal class Id3v2Header(source: Source) {
     }
 
     override fun toString(): String {
-        return "Id3v2Header(identifier=$identifier, majorVersion=$majorVersion, " +
+        return "Id3v2Header(identifier=$identifier, majorVersion=$version, " +
                 "revision=$revision, flags=$flags, size=$size)"
     }
 }
