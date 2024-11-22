@@ -20,6 +20,7 @@ package com.xuncorp.openmrw.core.format.mp3
 import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.rw.MrwReader
 import kotlinx.io.Source
+import kotlinx.io.bytestring.decodeToString
 
 internal class Mp3MrwReader : MrwReader() {
     override fun match(source: Source) {
@@ -30,8 +31,38 @@ internal class Mp3MrwReader : MrwReader() {
         val mp3MrwFormat = Mp3MrwFormat()
 
         val id3v2Header = Id3v2Header(source)
-        if (id3v2Header.extendedHeader) {
-            Id3v2ExtendedHeader(source)
+        val id3v2ExtendedHeaderSize = if (id3v2Header.extendedHeader) {
+            Id3v2ExtendedHeader(source).extendedHeaderSize.toInt() + 4
+        } else {
+            0
+        }
+
+        val totalId3v2FrameSize = id3v2Header.size - id3v2ExtendedHeaderSize
+        var readFrameSize = 0
+        while (readFrameSize < totalId3v2FrameSize) {
+            val id3V2FrameHeader = Id3v2FrameHeader(source)
+
+            if (id3V2FrameHeader.isPaddingFrame) {
+                break
+            }
+
+            val frameSize = id3V2FrameHeader.frameSize.toInt()
+
+            when (id3V2FrameHeader.frameType) {
+                Id3v2FrameHeader.FrameType.TextInformation -> {
+                    val textInformation = id3V2FrameHeader.getTextInformation(source)
+                    mp3MrwFormat.mrwComment.add(
+                        field = id3V2FrameHeader.frameId.decodeToString(),
+                        value = textInformation
+                    )
+                }
+
+                else -> {
+                    source.skip(frameSize.toLong())
+                }
+            }
+
+            readFrameSize += frameSize + 10
         }
 
         return mp3MrwFormat
