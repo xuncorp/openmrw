@@ -240,372 +240,372 @@ internal class Id3v2FrameHeader(source: Source) {
 @Suppress("SpellCheckingInspection")
 internal object Id3v2DeclaredFrames {
     /**
-     * Audio encryption
+     * Audio encryption.
      */
     const val APNC = "APNC"
 
     /**
-     * Attached picture
+     * Attached picture.
      */
     const val APIC = "APIC"
 
     /**
-     * Comments
+     * Comments.
      */
     const val COMM = "COMN"
 
     /**
-     * Commercial frame
+     * Commercial frame.
      */
     const val COMR = "COMR"
 
     /**
-     * Encryption method registration
+     * Encryption method registration.
      */
     const val ENCR = "ENCR"
 
     /**
-     * Equalization
+     * Equalization.
      */
     const val EQUA = "EQUA"
 
     /**
-     * Event timing codes
+     * Event timing codes.
      */
     const val ETCO = "ETCO"
 
     /**
-     * General encapsulated object
+     * General encapsulated object.
      */
     const val GEOB = "GEOB"
 
     /**
-     * Group identification registration
+     * Group identification registration.
      */
     const val GRID = "GRID"
 
     /**
-     * Involved people list
+     * Involved people list.
      */
     const val IPLS = "IPLS"
 
     /**
-     * Linked information
+     * Linked information.
      */
     const val LINK = "LINK"
 
     /**
-     * Music CD identifier
+     * Music CD identifier.
      */
     const val MCDI = "MCDI"
 
     /**
-     * MPEG location lookup table
+     * MPEG location lookup table.
      */
     const val MLLT = "MLLT"
 
     /**
-     * Ownership frame
+     * Ownership frame.
      */
     const val OWNE = "OWNE"
 
     /**
-     * Private frame
+     * Private frame.
      */
     const val PRIV = "PRIV"
 
     /**
-     * Play counter
+     * Play counter.
      */
     const val PCNT = "PCNT"
 
     /**
-     * Popularimeter
+     * Popularimeter.
      */
     const val POPM = "POPM"
 
     /**
-     * Position synchronisation frame
+     * Position synchronisation frame.
      */
     const val POSS = "POSS"
 
     /**
-     * Recommended buffer size
+     * Recommended buffer size.
      */
     const val RBUF = "RBUF"
 
     /**
-     * Relative volume adjustment
+     * Relative volume adjustment.
      */
     const val RVAD = "RVAD"
 
     /**
-     * Reverb
+     * Reverb.
      */
     const val RVRB = "RVRB"
 
     /**
-     * Synchronized lyric/text
+     * Synchronized lyric/text.
      */
     const val SYLT = "SYLT"
 
     /**
-     * Synchronized tempo codes
+     * Synchronized tempo codes.
      */
     const val SYTC = "SYTC"
 
     /**
-     * Album/Movie/Show title
+     * Album/Movie/Show title.
      */
     const val TALB = "TALB"
 
     /**
-     * BPM (beats per minute)
+     * BPM (beats per minute).
      */
     const val TBPM = "TBPM"
 
     /**
-     * Composer
+     * Composer.
      */
     const val TCOM = "TCOM"
 
     /**
-     * Content type
+     * Content type.
      */
     const val TCON = "TCON"
 
     /**
-     * Copyright message
+     * Copyright message.
      */
     const val TCOP = "TCOP"
 
     /**
-     * Date
+     * Date.
      */
     const val TDAT = "TDAT"
 
     /**
-     * Playlist delay
+     * Playlist delay.
      */
     const val TDLY = "TDLY"
 
     /**
-     * Encoded by
+     * Encoded by.
      */
     const val TENC = "TENC"
 
     /**
-     * Lyricist/Text writer
+     * Lyricist/Text writer.
      */
     const val TEXT = "TEXT"
 
     /**
-     * File type
+     * File type.
      */
     const val TFLT = "TFLT"
 
     /**
-     * Time
+     * Time.
      */
     const val TIME = "TIME"
 
     /**
-     * Content group description
+     * Content group description.
      */
     const val TIT1 = "TIT1"
 
     /**
-     * Title/songname/content description
+     * Title/songname/content description.
      */
     const val TIT2 = "TIT2"
 
     /**
-     * Subtitle/Description refinement
+     * Subtitle/Description refinement.
      */
     const val TIT3 = "TIT3"
 
     /**
-     * Initial key
+     * Initial key.
      */
     const val TKEY = "TKEY"
 
     /**
-     * Language(s)
+     * Language(s).
      */
     const val TLAN = "TLAN"
 
     /**
-     * Length
+     * Length.
      */
     const val TLEN = "TLEN"
 
     /**
-     * Media type
+     * Media type.
      */
     const val TMED = "TMED"
 
     /**
-     * Original album/movie/show title
+     * Original album/movie/show title.
      */
     const val TOAL = "TOAL"
 
     /**
-     * Original filename
+     * Original filename.
      */
     const val TOFN = "TOFN"
 
     /**
-     * Original lyricist(s)/text writer(s)
+     * Original lyricist(s)/text writer(s).
      */
     const val TOLY = "TOLY"
 
     /**
-     * artist(s)/performer(s)
+     * artist(s)/performer(s).
      */
     const val TOPE = "TOPE"
 
     /**
-     * Original release year
+     * Original release year.
      */
     const val TORY = "TORY"
 
     /**
-     * File owner/licensee
+     * File owner/licensee.
      */
     const val TOWN = "TOWN"
 
     /**
-     * Lead performer(s)/Soloist(s)
+     * Artist. Lead performer(s)/Soloist(s).
      */
     const val TPE1 = "TPE1"
 
     /**
-     * Band/orchestra/accompaniment
+     * Album artist. Band/orchestra/accompaniment.
      */
     const val TPE2 = "TPE2"
 
     /**
-     * Conductor/performer refinement
+     * Conductor/performer refinement.
      */
     const val TPE3 = "TPE3"
 
     /**
-     * Interpreted, remixed, or otherwise modified by
+     * Interpreted, remixed, or otherwise modified by.
      */
     const val TPE4 = "TPE4"
 
     /**
-     * Part of a set
+     * Part of a set.
      */
     const val TPOS = "TPOS"
 
     /**
-     * Publisher
+     * Publisher.
      */
     const val TPUB = "TPUB"
 
     /**
-     * Track number/Position in set
+     * Track number/Position in set.
      */
     const val TRCK = "TRCK"
 
     /**
-     * Recording dates
+     * Recording dates.
      */
     const val TRDA = "TRDA"
 
     /**
-     * Internet radio station name
+     * Internet radio station name.
      */
     const val TRSN = "TRSN"
 
     /**
-     * Internet radio station owner
+     * Internet radio station owner.
      */
     const val TRSO = "TRSO"
 
     /**
-     * Size
+     * Size.
      */
     const val TSIZ = "TSIZ"
 
     /**
-     * ISRC (international standard recording code)
+     * ISRC (international standard recording code).
      */
     const val TSRC = "TSRC"
 
     /**
-     * Software/Hardware and settings used for encoding
+     * Software/Hardware and settings used for encoding.
      */
     const val TSSE = "TSSE"
 
     /**
-     * Year
+     * Year.
      */
     const val TYER = "TYER"
 
     /**
-     * User defined text information frame
+     * User defined text information frame.
      */
     const val TXXX = "TXXX"
 
     /**
-     * Unique file identifier
+     * Unique file identifier.
      */
     const val UFID = "UFID"
 
     /**
-     * Terms of use
+     * Terms of use.
      */
     const val USER = "USER"
 
     /**
-     * Unsychronized lyric/text transcription
+     * Unsychronized lyric/text transcription.
      */
     const val USLT = "USLT"
 
     /**
-     * Commercial information
+     * Commercial information.
      */
     const val WCOM = "WCOM"
 
     /**
-     * Copyright/Legal information
+     * Copyright/Legal information.
      */
     const val WCOP = "WCOP"
 
     /**
-     * Official audio file webpage
+     * Official audio file webpage.
      */
     const val WOAF = "WOAF"
 
     /**
-     * Official artist/performer webpage
+     * Official artist/performer webpage.
      */
     const val WOAR = "WOAR"
 
     /**
-     * Official audio source webpage
+     * Official audio source webpage.
      */
     const val WOAS = "WOAS"
 
     /**
-     * Official internet radio station homepage
+     * Official internet radio station homepage.
      */
     const val WORS = "WORS"
 
     /**
-     * Payment
+     * Payment.
      */
     const val WPAY = "WPAY"
 
     /**
-     * Publishers official webpage
+     * Publishers official webpage.
      */
     const val WPUB = "WPUB"
 
     /**
-     * User defined URL link frame
+     * User defined URL link frame.
      */
     const val WXXX = "WXXX"
 }
