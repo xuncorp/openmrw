@@ -28,7 +28,7 @@ parses files using the read method.
     - [flac](core/src/main/kotlin/com/xuncorp/openmrw/core/format/flac) Free Lossless Audio Codec.
     - [mp3](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3) MPEG-1 Audio Layer 3.
       - [Id3v2.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3/Id3v2.kt) ID3v2 tags,
-        Only ID3v2.3.
+        ID3v2.3.0, ID3v2.4.0.
     - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for audio tag information; for instance, FLAC comments read will be 
       converted into this.
     - [MrwFormat.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormat.kt) is an abstract class for the obtained file information.
