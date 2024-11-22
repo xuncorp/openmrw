@@ -19,10 +19,11 @@
 
 package com.xuncorp.openmrw.core.format.mp3
 
+import com.xuncorp.openmrw.core.util.last
 import kotlinx.io.Source
 import kotlinx.io.bytestring.ByteString
+import kotlinx.io.bytestring.decodeToString
 import kotlinx.io.readByteString
-import kotlinx.io.readString
 import kotlinx.io.readUInt
 
 /**
@@ -145,7 +146,7 @@ internal class Id3v2ExtendedHeader(source: Source) {
  * As the tag consists of a tag header and a tag body with one or more frames, all the frames
  * consists of a frame header followed by one or more fields containing the actual information.
  */
-internal class Id3v2FrameHeader(source: Source) {
+internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
     /**
      * The frame ID made out of the characters capital A-Z and 0-9. Identifiers beginning with "X",
      * "Y" and "Z" are for experimental use and free for everyone to use, without the need to set
@@ -157,7 +158,14 @@ internal class Id3v2FrameHeader(source: Source) {
     /**
      * The size is calculated as frame size excluding frame header (frame size - 10).
      */
-    val frameSize = source.readUInt()
+    val frameSize = when (id3v2Version) {
+        3 -> source.readInt()
+        4 -> (source.readByte().toInt() and 0x7F shl 21) or
+                (source.readByte().toInt() and 0x7F shl 14) or
+                (source.readByte().toInt() and 0x7F shl 7) or
+                (source.readByte().toInt() and 0x7F)
+        else -> error("Invalid ID3v2 version: $id3v2Version")
+    }
 
     /**
      * %abc00000 %ijk00000
@@ -235,17 +243,33 @@ internal class Id3v2FrameHeader(source: Source) {
         require(frameType == FrameType.TextInformation)
         val textEncoding = source.readByte()
         // Terminated strings are terminated with $00 if encoded with ISO-8859-1 and $00 00 if
-        //   encoded as unicode.
+        // encoded as unicode.
         val (charset, endByteSize) = when (textEncoding.toInt()) {
+            // Terminated with 0x00.
             0x00 -> Pair(Charsets.ISO_8859_1, 1)
+            // Terminated with 0x00 0x00.
             0x01 -> Pair(Charsets.UTF_16, 2)
+            // Id3v2.4.0. Terminated with 0x00 0x00.
+            0x02 -> Pair(Charsets.UTF_16BE, 2)
+            // Id3v2.4.0. Terminated with 0x00.
+            //
+            0x03 -> Pair(Charsets.UTF_8, 1)
             else -> throw IllegalArgumentException("Invalid text encoding: $textEncoding")
         }
-        val textInformation = source.readString(
-            byteCount = frameSize.toLong() - 1L - endByteSize,
-            charset = charset
-        )
-        source.skip(endByteSize.toLong())
+
+        val byteString = source.readByteString(frameSize - 1)
+
+        // In some files, the UTF-8 fields in ID3v2.4.0 tags do not end with 0x00, which differs
+        // from the documentation. I suspect this might be due to issues with certain tag writing
+        // programs.
+        //
+        // To address this, OpenMrw has added additional checks.
+        val textInformation = if (charset == Charsets.UTF_8 && byteString.last().toInt() != 0x00) {
+            byteString.decodeToString(charset)
+        } else {
+            byteString.substring(0, byteString.size - endByteSize).decodeToString(charset)
+        }
+
         return textInformation
     }
 
