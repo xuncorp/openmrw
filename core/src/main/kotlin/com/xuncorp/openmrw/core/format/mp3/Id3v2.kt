@@ -166,6 +166,11 @@ internal class Id3v2FrameHeader(source: Source) {
      */
     val flags = source.readByteString(2)
 
+    val frameType: FrameType = when (frameId[0]) {
+        'T'.code.toByte() -> FrameType.TextInformation
+        else -> FrameType.Unknown
+    }
+
     /**
      * This flag tells the software what to do with this frame if it is unknown and the tag is
      * altered in any way. This applies to all kinds of alterations, including adding more padding
@@ -174,7 +179,7 @@ internal class Id3v2FrameHeader(source: Source) {
      * - true: Frame should be discarded.
      * - false: Frame should be preserved.
      */
-    val tagAlterPreservation = flags[0].toInt() and 0x80 != 0
+    fun tagAlterPreservation() = flags[0].toInt() and 0x80 != 0
 
     /**
      * This flag tells the software what to do with this frame if it is unknown and the file,
@@ -184,7 +189,7 @@ internal class Id3v2FrameHeader(source: Source) {
      * - true: Frame should be discarded.
      * - false: Frame should be preserved.
      */
-    val fileAlterPreservation = flags[0].toInt() and 0x40 != 0
+    fun fileAlterPreservation() = flags[0].toInt() and 0x40 != 0
 
     /**
      * This flag, if set, tells the software that the contents of this frame is intended to be read
@@ -192,7 +197,7 @@ internal class Id3v2FrameHeader(source: Source) {
      * changed, without knowledge in why the frame was flagged read only and without taking the
      * proper means to compensate, e.g. recalculating the signature, the bit should be cleared.
      */
-    val readOnly = flags[0].toInt() and 0x20 != 0
+    fun readOnly() = flags[0].toInt() and 0x20 != 0
 
     /**
      * This flag indicates whether or not the frame is compressed.
@@ -201,7 +206,7 @@ internal class Id3v2FrameHeader(source: Source) {
      *   frame header.
      * - false: Frame is not compressed.
      */
-    val compression = flags[1].toInt() and 0x80 != 0
+    fun compression() = flags[1].toInt() and 0x80 != 0
 
     /**
      * This flag indicates whether or not the frame is encrypted. If set one byte indicating with
@@ -209,7 +214,7 @@ internal class Id3v2FrameHeader(source: Source) {
      *
      * TODO https://id3.org/id3v2.3.0#sec4.26
      */
-    val encryption = flags[1].toInt() and 0x40 != 0
+    fun encryption() = flags[1].toInt() and 0x40 != 0
 
     /**
      * This flag indicates whether or not this frame belongs in a group with other frames. If set a
@@ -219,15 +224,9 @@ internal class Id3v2FrameHeader(source: Source) {
      * - true: Frame contains group information.
      * - false: Frame does not contain group information.
      */
-    val groupingIdentity = flags[1].toInt() and 0x20 != 0
+    fun groupingIdentity() = flags[1].toInt() and 0x20 != 0
 
-    val isPaddingFrame = frameId == ByteString(0x00, 0x00, 0x00, 0x00)
-
-    val frameType: FrameType
-        = when (frameId[0]) {
-            'T'.code.toByte() -> FrameType.TextInformation
-            else -> FrameType.Unknown
-        }
+    fun isPaddingFrame() = frameId == ByteString(0x00, 0x00, 0x00, 0x00)
 
     /**
      * Get the text information from the frame if [frameType] is [FrameType.TextInformation].

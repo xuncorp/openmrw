@@ -42,7 +42,7 @@ internal class Mp3MrwReader : MrwReader() {
         while (readFrameSize < totalId3v2FrameSize) {
             val id3V2FrameHeader = Id3v2FrameHeader(source)
 
-            if (id3V2FrameHeader.isPaddingFrame) {
+            if (id3V2FrameHeader.isPaddingFrame()) {
                 break
             }
 
