@@ -252,7 +252,6 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
             // Id3v2.4.0. Terminated with 0x00 0x00.
             0x02 -> Pair(Charsets.UTF_16BE, 2)
             // Id3v2.4.0. Terminated with 0x00.
-            //
             0x03 -> Pair(Charsets.UTF_8, 1)
             else -> throw IllegalArgumentException("Invalid text encoding: $textEncoding")
         }
