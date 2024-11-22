@@ -31,7 +31,7 @@ internal class Mp3MrwReader : MrwReader() {
         val mp3MrwFormat = Mp3MrwFormat()
 
         val id3v2Header = Id3v2Header(source)
-        val id3v2ExtendedHeaderSize = if (id3v2Header.extendedHeader) {
+        val id3v2ExtendedHeaderSize = if (id3v2Header.extendedHeader()) {
             Id3v2ExtendedHeader(source).extendedHeaderSize.toInt() + 4
         } else {
             0

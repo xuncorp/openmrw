@@ -30,25 +30,31 @@ import kotlinx.io.readUInt
  *
  * Should be the first information in the file. 10 bytes.
  *
- * [ID3 tag version 2.3.0](https://id3.org/id3v2.3.0), informal standard.
+ * - [ID3 tag version 2.3.0](https://id3.org/id3v2.3.0), informal standard.
+ * - [ID3 tag version 2.4.0](https://id3.org/id3v2.4.0-structure), informal standard.
  */
 internal class Id3v2Header(source: Source) {
     /**
-     * 'I', 'D', '3'
+     * 'I', 'D', '3', 3 bytes.
      */
     val identifier = source.readByteString(3)
 
     /**
-     * 3
+     * 1 byte.
+     *
+     * - 3: ID3v2.3.0
+     * - 4: ID3v2.4.0
      */
     val majorVersion = source.readByte().toInt() and 0xFF
 
     /**
-     * 0
+     * 1 byte.
      */
     val revision = source.readByte().toInt() and 0xFF
 
     /**
+     * 1 byte.
+     *
      * %abc00000
      * - a: [unSynchronisation]
      * - b: [extendedHeader]
@@ -57,6 +63,8 @@ internal class Id3v2Header(source: Source) {
     val flags = source.readByte()
 
     /**
+     * 4 bytes.
+     *
      * The ID3v2tag size (bytes) is the size of the complete tag after un synchronisation,
      * including padding, excluding the header but not excluding the extended header
      * (total tag size - 10).
@@ -73,18 +81,26 @@ internal class Id3v2Header(source: Source) {
      * Bit 7 in the 'ID3v2 flags' indicates whether or not un synchronisation is used
      * (see section 5 for details); a set bit indicates usage.
      */
-    val unSynchronisation = flags.toInt() and 0x80 != 0
+    fun unSynchronisation() = flags.toInt() and 0x80 != 0
 
     /**
      * The second bit (bit 6) indicates whether or not the header is followed by an extended header.
      */
-    val extendedHeader = flags.toInt() and 0x40 != 0
+    fun extendedHeader() = flags.toInt() and 0x40 != 0
 
     /**
      * The third bit (bit 5) should be used as an 'experimental indicator'. This flag should always
      * be set when the tag is in an experimental stage.
      */
-    val experimentalIndicator = flags.toInt() and 0x20 != 0
+    fun experimentalIndicator() = flags.toInt() and 0x20 != 0
+
+    /**
+     * ID3v2.4.0 only.
+     */
+    fun footerPresent(): Boolean {
+        require(majorVersion == 4)
+        return flags.toInt() and 0x10 != 0
+    }
 
     init {
         require(identifier == ByteString(0x49, 0x44, 0x33))
