@@ -20,7 +20,7 @@
 package com.xuncorp.openmrw.core.format
 
 import com.xuncorp.openmrw.core.UnstableOpenMrwApi
-import com.xuncorp.openmrw.core.format.mp3.Id3v2DeclaredFrames
+import com.xuncorp.openmrw.core.rw.id3v2.Id3v2DeclaredFrames
 
 class MrwComment {
     /**

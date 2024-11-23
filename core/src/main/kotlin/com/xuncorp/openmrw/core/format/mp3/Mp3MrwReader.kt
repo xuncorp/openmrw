@@ -19,6 +19,9 @@ package com.xuncorp.openmrw.core.format.mp3
 
 import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.rw.MrwReader
+import com.xuncorp.openmrw.core.rw.id3v2.Id3v2ExtendedHeader
+import com.xuncorp.openmrw.core.rw.id3v2.Id3v2FrameHeader
+import com.xuncorp.openmrw.core.rw.id3v2.Id3v2Header
 import kotlinx.io.Source
 import kotlinx.io.bytestring.decodeToString
 
@@ -40,13 +43,23 @@ internal class Mp3MrwReader : MrwReader() {
         val totalId3v2FrameSize = id3v2Header.size - id3v2ExtendedHeaderSize
         var readFrameSize = 0
         while (readFrameSize < totalId3v2FrameSize) {
-            val id3V2FrameHeader = Id3v2FrameHeader(source)
+            val id3V2FrameHeader = Id3v2FrameHeader(
+                source = source,
+                id3v2Version = id3v2Header.version
+            )
 
             if (id3V2FrameHeader.isPaddingFrame()) {
                 break
             }
 
-            val frameSize = id3V2FrameHeader.frameSize.toInt()
+            val frameSize = id3V2FrameHeader.frameSize
+
+            println(
+                """
+                    id3V2FrameHeader = $id3V2FrameHeader
+                    frameId = ${id3V2FrameHeader.frameId.decodeToString()}
+                """.trimIndent()
+            )
 
             when (id3V2FrameHeader.frameType) {
                 Id3v2FrameHeader.FrameType.TextInformation -> {
@@ -54,6 +67,14 @@ internal class Mp3MrwReader : MrwReader() {
                     mp3MrwFormat.mrwComment.add(
                         field = id3V2FrameHeader.frameId.decodeToString(),
                         value = textInformation
+                    )
+                }
+
+                Id3v2FrameHeader.FrameType.Comment -> {
+                    val comment = id3V2FrameHeader.getComment(source)
+                    mp3MrwFormat.mrwComment.add(
+                        field = id3V2FrameHeader.frameId.decodeToString(),
+                        value = comment
                     )
                 }
 

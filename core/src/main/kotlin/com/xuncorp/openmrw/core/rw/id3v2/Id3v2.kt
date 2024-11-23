@@ -17,7 +17,7 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.xuncorp.openmrw.core.format.mp3
+package com.xuncorp.openmrw.core.rw.id3v2
 
 import com.xuncorp.openmrw.core.util.last
 import kotlinx.io.Source
@@ -25,6 +25,7 @@ import kotlinx.io.bytestring.ByteString
 import kotlinx.io.bytestring.decodeToString
 import kotlinx.io.readByteString
 import kotlinx.io.readUInt
+import java.nio.charset.Charset
 
 /**
  * # ID3v2 Header
@@ -164,7 +165,7 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
                 (source.readByte().toInt() and 0x7F shl 14) or
                 (source.readByte().toInt() and 0x7F shl 7) or
                 (source.readByte().toInt() and 0x7F)
-        else -> error("Invalid ID3v2 version: $id3v2Version")
+        else -> error("Invalid ID3v2 version: $id3v2Version.")
     }
 
     /**
@@ -174,9 +175,47 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      */
     val flags = source.readByteString(2)
 
-    val frameType: FrameType = when (frameId[0]) {
-        'T'.code.toByte() -> FrameType.TextInformation
+    val frameType: FrameType = when {
+        frameId[0] == 'T'.code.toByte() -> FrameType.TextInformation
+        frameId.decodeToString() == Id3v2DeclaredFrames.COMM -> FrameType.Comment
         else -> FrameType.Unknown
+    }
+
+    private fun getCharset(textEncoding: Byte): Charset {
+        return when (textEncoding.toInt()) {
+            // Terminated with 0x00.
+            0x00 -> Charsets.ISO_8859_1
+            // Terminated with 0x00 0x00.
+            0x01 -> Charsets.UTF_16
+            // Id3v2.4.0. Terminated with 0x00 0x00.
+            0x02 -> Charsets.UTF_16BE
+            // Id3v2.4.0. Terminated with 0x00.
+            0x03 -> Charsets.UTF_8
+            else -> error("Invalid text encoding: $textEncoding.")
+        }
+    }
+
+    /**
+     * The [byteString] does not contain header data such as text encoding, but contains a terminated
+     * string.
+     */
+    private fun geActualText(byteString: ByteString, charset: Charset): String {
+        // In some files, the UTF-8 fields in ID3v2.4.0 tags do not end with 0x00, which differs
+        // from the documentation. I suspect this might be due to issues with certain tag writing
+        // programs.
+        //
+        // To address this, OpenMrw has added additional checks.
+        return if (charset == Charsets.UTF_8 && byteString.last().toInt() != 0x00) {
+            byteString.decodeToString(charset)
+        } else {
+            val endByteSize = when (charset) {
+                Charsets.ISO_8859_1 -> 1
+                Charsets.UTF_16, Charsets.UTF_16BE -> 2
+                Charsets.UTF_8 -> 1
+                else -> error("Invalid charset: $charset.")
+            }
+            byteString.substring(0, byteString.size - endByteSize).decodeToString(charset)
+        }
     }
 
     /**
@@ -242,415 +281,35 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
     fun getTextInformation(source: Source): String {
         require(frameType == FrameType.TextInformation)
         val textEncoding = source.readByte()
-        // Terminated strings are terminated with $00 if encoded with ISO-8859-1 and $00 00 if
-        // encoded as unicode.
-        val (charset, endByteSize) = when (textEncoding.toInt()) {
-            // Terminated with 0x00.
-            0x00 -> Pair(Charsets.ISO_8859_1, 1)
-            // Terminated with 0x00 0x00.
-            0x01 -> Pair(Charsets.UTF_16, 2)
-            // Id3v2.4.0. Terminated with 0x00 0x00.
-            0x02 -> Pair(Charsets.UTF_16BE, 2)
-            // Id3v2.4.0. Terminated with 0x00.
-            0x03 -> Pair(Charsets.UTF_8, 1)
-            else -> throw IllegalArgumentException("Invalid text encoding: $textEncoding")
-        }
-
+        val charset = getCharset(textEncoding)
         val byteString = source.readByteString(frameSize - 1)
+        return geActualText(byteString, charset)
+    }
 
-        // In some files, the UTF-8 fields in ID3v2.4.0 tags do not end with 0x00, which differs
-        // from the documentation. I suspect this might be due to issues with certain tag writing
-        // programs.
-        //
-        // To address this, OpenMrw has added additional checks.
-        val textInformation = if (charset == Charsets.UTF_8 && byteString.last().toInt() != 0x00) {
-            byteString.decodeToString(charset)
-        } else {
-            byteString.substring(0, byteString.size - endByteSize).decodeToString(charset)
-        }
+    fun getComment(source: Source): String {
+        require(frameType == FrameType.Comment)
+        val textEncoding = source.readByte()
+        val charset = getCharset(textEncoding)
+        // Language.
+        source.readByteString(3)
+        // Short content descriptor.
+        source.readByte()
 
-        return textInformation
+        val byteString = source.readByteString(frameSize - 5)
+        return geActualText(byteString, charset)
     }
 
     enum class FrameType {
         TextInformation,
 
         /**
+         * ID3v2.3.0 title 4.11.
+         */
+        Comment,
+
+        /**
          * TODO: OpenMrw does not support this frame type yet.
          */
         Unknown
     }
-}
-
-@Suppress("SpellCheckingInspection")
-internal object Id3v2DeclaredFrames {
-    /**
-     * Audio encryption.
-     */
-    const val APNC = "APNC"
-
-    /**
-     * Attached picture.
-     */
-    const val APIC = "APIC"
-
-    /**
-     * Comments.
-     */
-    const val COMM = "COMN"
-
-    /**
-     * Commercial frame.
-     */
-    const val COMR = "COMR"
-
-    /**
-     * Encryption method registration.
-     */
-    const val ENCR = "ENCR"
-
-    /**
-     * Equalization.
-     */
-    const val EQUA = "EQUA"
-
-    /**
-     * Event timing codes.
-     */
-    const val ETCO = "ETCO"
-
-    /**
-     * General encapsulated object.
-     */
-    const val GEOB = "GEOB"
-
-    /**
-     * Group identification registration.
-     */
-    const val GRID = "GRID"
-
-    /**
-     * Involved people list.
-     */
-    const val IPLS = "IPLS"
-
-    /**
-     * Linked information.
-     */
-    const val LINK = "LINK"
-
-    /**
-     * Music CD identifier.
-     */
-    const val MCDI = "MCDI"
-
-    /**
-     * MPEG location lookup table.
-     */
-    const val MLLT = "MLLT"
-
-    /**
-     * Ownership frame.
-     */
-    const val OWNE = "OWNE"
-
-    /**
-     * Private frame.
-     */
-    const val PRIV = "PRIV"
-
-    /**
-     * Play counter.
-     */
-    const val PCNT = "PCNT"
-
-    /**
-     * Popularimeter.
-     */
-    const val POPM = "POPM"
-
-    /**
-     * Position synchronisation frame.
-     */
-    const val POSS = "POSS"
-
-    /**
-     * Recommended buffer size.
-     */
-    const val RBUF = "RBUF"
-
-    /**
-     * Relative volume adjustment.
-     */
-    const val RVAD = "RVAD"
-
-    /**
-     * Reverb.
-     */
-    const val RVRB = "RVRB"
-
-    /**
-     * Synchronized lyric/text.
-     */
-    const val SYLT = "SYLT"
-
-    /**
-     * Synchronized tempo codes.
-     */
-    const val SYTC = "SYTC"
-
-    /**
-     * Album/Movie/Show title.
-     */
-    const val TALB = "TALB"
-
-    /**
-     * BPM (beats per minute).
-     */
-    const val TBPM = "TBPM"
-
-    /**
-     * Composer.
-     */
-    const val TCOM = "TCOM"
-
-    /**
-     * Content type.
-     */
-    const val TCON = "TCON"
-
-    /**
-     * Copyright message.
-     */
-    const val TCOP = "TCOP"
-
-    /**
-     * Date.
-     */
-    const val TDAT = "TDAT"
-
-    /**
-     * Playlist delay.
-     */
-    const val TDLY = "TDLY"
-
-    /**
-     * Encoded by.
-     */
-    const val TENC = "TENC"
-
-    /**
-     * Lyricist/Text writer.
-     */
-    const val TEXT = "TEXT"
-
-    /**
-     * File type.
-     */
-    const val TFLT = "TFLT"
-
-    /**
-     * Time.
-     */
-    const val TIME = "TIME"
-
-    /**
-     * Content group description.
-     */
-    const val TIT1 = "TIT1"
-
-    /**
-     * Title/songname/content description.
-     */
-    const val TIT2 = "TIT2"
-
-    /**
-     * Subtitle/Description refinement.
-     */
-    const val TIT3 = "TIT3"
-
-    /**
-     * Initial key.
-     */
-    const val TKEY = "TKEY"
-
-    /**
-     * Language(s).
-     */
-    const val TLAN = "TLAN"
-
-    /**
-     * Length.
-     */
-    const val TLEN = "TLEN"
-
-    /**
-     * Media type.
-     */
-    const val TMED = "TMED"
-
-    /**
-     * Original album/movie/show title.
-     */
-    const val TOAL = "TOAL"
-
-    /**
-     * Original filename.
-     */
-    const val TOFN = "TOFN"
-
-    /**
-     * Original lyricist(s)/text writer(s).
-     */
-    const val TOLY = "TOLY"
-
-    /**
-     * artist(s)/performer(s).
-     */
-    const val TOPE = "TOPE"
-
-    /**
-     * Original release year.
-     */
-    const val TORY = "TORY"
-
-    /**
-     * File owner/licensee.
-     */
-    const val TOWN = "TOWN"
-
-    /**
-     * Artist. Lead performer(s)/Soloist(s).
-     */
-    const val TPE1 = "TPE1"
-
-    /**
-     * Album artist. Band/orchestra/accompaniment.
-     */
-    const val TPE2 = "TPE2"
-
-    /**
-     * Conductor/performer refinement.
-     */
-    const val TPE3 = "TPE3"
-
-    /**
-     * Interpreted, remixed, or otherwise modified by.
-     */
-    const val TPE4 = "TPE4"
-
-    /**
-     * Part of a set.
-     */
-    const val TPOS = "TPOS"
-
-    /**
-     * Publisher.
-     */
-    const val TPUB = "TPUB"
-
-    /**
-     * Track number/Position in set.
-     */
-    const val TRCK = "TRCK"
-
-    /**
-     * Recording dates.
-     */
-    const val TRDA = "TRDA"
-
-    /**
-     * Internet radio station name.
-     */
-    const val TRSN = "TRSN"
-
-    /**
-     * Internet radio station owner.
-     */
-    const val TRSO = "TRSO"
-
-    /**
-     * Size.
-     */
-    const val TSIZ = "TSIZ"
-
-    /**
-     * ISRC (international standard recording code).
-     */
-    const val TSRC = "TSRC"
-
-    /**
-     * Software/Hardware and settings used for encoding.
-     */
-    const val TSSE = "TSSE"
-
-    /**
-     * Year.
-     */
-    const val TYER = "TYER"
-
-    /**
-     * User defined text information frame.
-     */
-    const val TXXX = "TXXX"
-
-    /**
-     * Unique file identifier.
-     */
-    const val UFID = "UFID"
-
-    /**
-     * Terms of use.
-     */
-    const val USER = "USER"
-
-    /**
-     * Unsychronized lyric/text transcription.
-     */
-    const val USLT = "USLT"
-
-    /**
-     * Commercial information.
-     */
-    const val WCOM = "WCOM"
-
-    /**
-     * Copyright/Legal information.
-     */
-    const val WCOP = "WCOP"
-
-    /**
-     * Official audio file webpage.
-     */
-    const val WOAF = "WOAF"
-
-    /**
-     * Official artist/performer webpage.
-     */
-    const val WOAR = "WOAR"
-
-    /**
-     * Official audio source webpage.
-     */
-    const val WOAS = "WOAS"
-
-    /**
-     * Official internet radio station homepage.
-     */
-    const val WORS = "WORS"
-
-    /**
-     * Payment.
-     */
-    const val WPAY = "WPAY"
-
-    /**
-     * Publishers official webpage.
-     */
-    const val WPUB = "WPUB"
-
-    /**
-     * User defined URL link frame.
-     */
-    const val WXXX = "WXXX"
 }

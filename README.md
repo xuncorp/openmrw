@@ -23,19 +23,25 @@ folder.
 [OpenMrw.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/OpenMrw.kt) is a singleton that directly
 parses files using the read method.
 
-- [format](core/src/main/kotlin/com/xuncorp/openmrw/core/format) folder contains the handling of various file types.
+- [format](core/src/main/kotlin/com/xuncorp/openmrw/core/format) folder contains the handling of
+  various file types.
     - [ape](core/src/main/kotlin/com/xuncorp/openmrw/core/format/ape) Monkey's Audio.
     - [flac](core/src/main/kotlin/com/xuncorp/openmrw/core/format/flac) Free Lossless Audio Codec.
     - [mp3](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3) MPEG-1 Audio Layer 3.
-      - [Id3v2.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3/Id3v2.kt) ID3v2 tags,
-        ID3v2.3.0, ID3v2.4.0.
-    - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for audio tag information; for instance, FLAC comments read will be 
+    - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for
+      audio tag information; for instance, FLAC comments read will be
       converted into this.
-    - [MrwFormat.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormat.kt) is an abstract class for the obtained file information.
-    - [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormatType.kt) contains the supported formats.
-    - [MrwStreamInfo.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwStreamInfo.kt) is for stream information.
+    - [MrwFormat.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormat.kt) is an
+      abstract class for the obtained file information.
+    - [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormatType.kt)
+      contains the supported formats.
+    - [MrwStreamInfo.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwStreamInfo.kt) is
+      for stream information.
 - [rw](core/src/main/kotlin/com/xuncorp/openmrw/core/rw) folder is for read-write operations, which
-  includes abstract classes for readers and writers.
+  includes abstract classes for readers and
+  writers.
+    - [id3v2](core/src/main/kotlin/com/xuncorp/openmrw/core/rw/id3v2) ID3v2 tags,
+      ID3v2.3.0, ID3v2.4.0.
 
 Please refer to the code comments for detailed instructions.
 
