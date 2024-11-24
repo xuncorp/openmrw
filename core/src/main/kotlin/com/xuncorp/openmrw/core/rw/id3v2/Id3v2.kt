@@ -58,7 +58,7 @@ internal class Id3v2Header(source: Source) {
      * 1 byte.
      *
      * %abc00000
-     * - a: [unsynchronisation]
+     * - a: [unsynchronization]
      * - b: [extendedHeader]
      * - c: [experimentalIndicator]
      */
@@ -67,7 +67,7 @@ internal class Id3v2Header(source: Source) {
     /**
      * 4 bytes.
      *
-     * The ID3v2tag size (bytes) is the size of the complete tag after unsynchronisation, including
+     * The ID3v2tag size (bytes) is the size of the complete tag after un synchronization, including
      * padding, excluding the header but not excluding the extended header
      * (total tag size - 10).
      *
@@ -80,10 +80,10 @@ internal class Id3v2Header(source: Source) {
             (source.readByte().toInt() and 0x7F)
 
     /**
-     * Bit 7 in the 'ID3v2 flags' indicates whether or not unsynchronisation is used
+     * Bit 7 in the 'ID3v2 flags' indicates whether or not unsynchronization is used
      * (see section 5 for details); a set bit indicates usage.
      */
-    fun unsynchronisation() = flags.toInt() and 0x80 != 0
+    fun unsynchronization() = flags.toInt() and 0x80 != 0
 
     /**
      * The second bit (bit 6) indicates whether or not the header is followed by an extended header.
