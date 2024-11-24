@@ -19,7 +19,9 @@
 
 package com.xuncorp.openmrw.core.rw.id3v2
 
+import com.xuncorp.openmrw.core.util.first
 import com.xuncorp.openmrw.core.util.last
+import com.xuncorp.openmrw.core.util.lastIndex
 import kotlinx.io.Source
 import kotlinx.io.bytestring.ByteString
 import kotlinx.io.bytestring.decodeToString
@@ -166,6 +168,7 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
                 (source.readByte().toInt() and 0x7F shl 14) or
                 (source.readByte().toInt() and 0x7F shl 7) or
                 (source.readByte().toInt() and 0x7F)
+
         else -> error("Invalid ID3v2 version: $id3v2Version.")
     }
 
@@ -173,6 +176,12 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      * %abc00000 %ijk00000
      * - a: [tagAlterPreservation]
      * - b: [fileAlterPreservation]
+     * - c: [readOnly]
+     * - i: [compression]
+     * - j: [encryption]
+     * - k: [groupingIdentity]
+     *
+     * TODO: ID3v2.4.0 flags.
      */
     val flags = source.readByteString(2)
 
@@ -182,7 +191,8 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
         return when (textEncoding.toInt()) {
             // Terminated with 0x00.
             0x00 -> Charsets.ISO_8859_1
-            // Terminated with 0x00 0x00.
+            // Unicode strings must begin with the Unicode BOM ($FF FE or $FE FF) to identify the
+            // byte order. Terminated with 0x00 0x00.
             0x01 -> Charsets.UTF_16
             // Id3v2.4.0. Terminated with 0x00 0x00.
             0x02 -> Charsets.UTF_16BE
@@ -193,25 +203,59 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
     }
 
     /**
-     * The [byteString] does not contain header data such as text encoding, but contains a terminated
-     * string.
+     * The [byteString] does not contain header data such as text encoding, but contains a
+     * terminated string.
      */
     private fun geActualText(byteString: ByteString, charset: Charset): String {
-        // In some files, the UTF-8 fields in ID3v2.4.0 tags do not end with 0x00, which differs
-        // from the documentation. I suspect this might be due to issues with certain tag writing
+        // In some files, the fields in tags do not end with 0x00 or 0x00 0x00, which differs from
+        // the documentation. I suspect this might be due to issues with certain tag writing
         // programs.
         //
         // To address this, OpenMrw has added additional checks.
-        return if (charset == Charsets.UTF_8 && byteString.last().toInt() != 0x00) {
-            byteString.decodeToString(charset)
-        } else {
-            val endByteSize = when (charset) {
-                Charsets.ISO_8859_1 -> 1
-                Charsets.UTF_16, Charsets.UTF_16BE -> 2
-                Charsets.UTF_8 -> 1
-                else -> error("Invalid charset: $charset.")
+        return when (charset) {
+            Charsets.ISO_8859_1, Charsets.UTF_8 -> {
+                if (byteString.last().toInt() == 0x00) {
+                    byteString.substring(0, byteString.size - 1).decodeToString(charset)
+                } else {
+                    byteString.decodeToString(charset)
+                }
             }
-            byteString.substring(0, byteString.size - endByteSize).decodeToString(charset)
+
+            Charsets.UTF_16 -> {
+                // Ignore Unicode NULL [0xFF FE 00 00] [0xFE FF 00 00].
+                val startIndex = when {
+                    byteString.size <= 4 -> 0
+                    byteString[0].toInt() and 0xFF == 0xFF &&
+                            byteString[1].toInt() and 0xFF == 0xFE &&
+                            byteString[2].toInt() and 0xFF == 0x00 &&
+                            byteString[3].toInt() and 0xFF == 0x00 -> 4
+                    byteString[0].toInt() and 0xFF == 0xFE &&
+                            byteString[1].toInt() and 0xFF == 0xFF &&
+                            byteString[2].toInt() and 0xFF == 0x00 &&
+                            byteString[3].toInt() and 0xFF == 0x00 -> 4
+                    else -> 0
+                }
+
+                if (byteString.last().toInt() and 0xFF == 0x00 &&
+                    byteString[byteString.lastIndex - 1].toInt() and 0xFF == 0x00
+                ) {
+                    byteString.substring(startIndex, byteString.size - 2).decodeToString(charset)
+                } else {
+                    byteString.substring(startIndex).decodeToString(charset)
+                }
+            }
+
+            Charsets.UTF_16BE -> {
+                if (byteString.last().toInt() and 0xFF == 0x00 &&
+                    byteString[byteString.lastIndex - 1].toInt() and 0xFF == 0x00
+                ) {
+                    byteString.substring(0, byteString.size - 2).decodeToString(charset)
+                } else {
+                    byteString.decodeToString(charset)
+                }
+            }
+
+            else -> error("Invalid charset: $charset.")
         }
     }
 
@@ -287,12 +331,15 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
         require(frameType == FrameType.Comment)
         val textEncoding = source.readByte()
         val charset = getCharset(textEncoding)
-        // Language.
+        // Language. 'XXX'.
         source.readByteString(3)
-        // Short content descriptor.
-        source.readByte()
 
-        val byteString = source.readByteString(frameSize - 5)
+        var byteString = source.readByteString(frameSize - 4)
+        // Content descriptor.
+        if (byteString.first().toInt() and 0xFF == 0x00) {
+            byteString = byteString.substring(1)
+        }
+
         return geActualText(byteString, charset)
     }
 
@@ -300,12 +347,15 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
         require(frameType == FrameType.UnsynchronizedLyrics)
         val textEncoding = source.readByte()
         val charset = getCharset(textEncoding)
-        // Language.
+        // Language. 'XXX'.
         source.readByteString(3)
-        // Short content descriptor.
-        source.readByte()
 
-        val byteString = source.readByteString(frameSize - 5)
+        var byteString = source.readByteString(frameSize - 4)
+        // Content descriptor.
+        if (byteString.first().toInt() and 0xFF == 0x00) {
+            byteString = byteString.substring(1)
+        }
+
         return geActualText(byteString, charset)
     }
 

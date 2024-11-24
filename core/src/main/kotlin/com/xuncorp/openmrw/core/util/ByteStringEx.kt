@@ -24,4 +24,6 @@ import kotlinx.io.bytestring.ByteString
 val ByteString.lastIndex
     get() = size - 1
 
+fun ByteString.first() = get(0)
+
 fun ByteString.last() = get(lastIndex)
