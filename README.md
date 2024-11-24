@@ -48,7 +48,7 @@ Please refer to the code comments for detailed instructions.
 ## Contributors
 
 <a href="https://github.com/xuncorp/openmrw/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=xuncorp/openmrw&columns=12" alt="contributors"/>
+    <img src="https://contrib.rocks/image?repo=xuncorp/openmrw&columns=15" alt="contributors"/>
 </a>
 
 ## License
