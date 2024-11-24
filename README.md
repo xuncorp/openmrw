@@ -4,7 +4,7 @@ OpenMrw (Open Metadata Reader Writer), a tool library for the JVM platform.
 
 - **Identify** media files.
 - **Read** media files stream information, metadata, and other information.
-- **Write** media files metadata, and other information.
+- **Write (TODO)** media files metadata, and other information.
 
 **This project is still in a very early stage and is not recommended for use in production
 environments.**
