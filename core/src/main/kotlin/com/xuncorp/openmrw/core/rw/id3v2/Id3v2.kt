@@ -147,6 +147,7 @@ internal class Id3v2ExtendedHeader(source: Source) {
  * As the tag consists of a tag header and a tag body with one or more frames, all the frames
  * consists of a frame header followed by one or more fields containing the actual information.
  */
+@Suppress("SpellCheckingInspection")
 internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
     /**
      * The frame ID made out of the characters capital A-Z and 0-9. Identifiers beginning with "X",
@@ -175,11 +176,7 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      */
     val flags = source.readByteString(2)
 
-    val frameType: FrameType = when {
-        frameId[0] == 'T'.code.toByte() -> FrameType.TextInformation
-        frameId.decodeToString() == Id3v2DeclaredFrames.COMM -> FrameType.Comment
-        else -> FrameType.Unknown
-    }
+    val frameType: FrameType
 
     private fun getCharset(textEncoding: Byte): Charset {
         return when (textEncoding.toInt()) {
@@ -299,11 +296,39 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
         return geActualText(byteString, charset)
     }
 
+    fun getUnsynchronizedLyrics(source: Source): String {
+        require(frameType == FrameType.UnsynchronizedLyrics)
+        val textEncoding = source.readByte()
+        val charset = getCharset(textEncoding)
+        // Language.
+        source.readByteString(3)
+        // Short content descriptor.
+        source.readByte()
+
+        val byteString = source.readByteString(frameSize - 5)
+        return geActualText(byteString, charset)
+    }
+
+    init {
+        val frameIdString = frameId.decodeToString()
+        frameType = when {
+            frameId[0] == 'T'.code.toByte() -> FrameType.TextInformation
+            frameIdString == Id3v2DeclaredFrames.USLT -> FrameType.UnsynchronizedLyrics
+            frameIdString == Id3v2DeclaredFrames.COMM -> FrameType.Comment
+            else -> FrameType.Unknown
+        }
+    }
+
     enum class FrameType {
         TextInformation,
 
         /**
-         * ID3v2.3.0 title 4.11.
+         * ID3v2.3.0 title 4.9 [Id3v2DeclaredFrames.USLT].
+         */
+        UnsynchronizedLyrics,
+
+        /**
+         * ID3v2.3.0 title 4.11 [Id3v2DeclaredFrames.COMM].
          */
         Comment,
 

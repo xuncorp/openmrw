@@ -70,6 +70,14 @@ internal class Mp3MrwReader : MrwReader() {
                     )
                 }
 
+                Id3v2FrameHeader.FrameType.UnsynchronizedLyrics -> {
+                    val unsynchronizedLyrics = id3V2FrameHeader.getUnsynchronizedLyrics(source)
+                    mp3MrwFormat.mrwComment.add(
+                        field = id3V2FrameHeader.frameId.decodeToString(),
+                        value = unsynchronizedLyrics
+                    )
+                }
+
                 Id3v2FrameHeader.FrameType.Comment -> {
                     val comment = id3V2FrameHeader.getComment(source)
                     mp3MrwFormat.mrwComment.add(
