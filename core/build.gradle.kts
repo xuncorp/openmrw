@@ -3,7 +3,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrains.kotlin.jvm)
+    `maven-publish`
 }
+
+group = "com.xuncorp"
+version = "0.1.0-dev01"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -19,4 +23,12 @@ kotlin {
 dependencies {
     testImplementation(libs.junit)
     implementation(libs.kotlinx.io)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }
