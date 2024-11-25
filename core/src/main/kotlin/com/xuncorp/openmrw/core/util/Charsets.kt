@@ -22,13 +22,13 @@ package com.xuncorp.openmrw.core.util
 import java.nio.charset.Charset
 
 /**
- * [sun.nio.cs.GBK].
+ * @see sun.nio.cs.GBK
  */
 val Charsets.GBK: Charset
     get() = charset("GBK")
 
 /**
- * [sun.nio.cs.GB18030].
+ * @see sun.nio.cs.GB18030
  */
 val Charsets.GB18030: Charset
     get() = charset("GB18030")

@@ -311,12 +311,16 @@ internal class Id3v2FrameHeader(
         TextInformation,
 
         /**
-         * ID3v2.3.0 title 4.9 [Id3v2DeclaredFrames.USLT].
+         * ID3v2.3.0 title 4.9.
+         *
+         * @see Id3v2DeclaredFrames.USLT
          */
         UnsynchronizedLyrics,
 
         /**
-         * ID3v2.3.0 title 4.11 [Id3v2DeclaredFrames.COMM].
+         * ID3v2.3.0 title 4.11.
+         *
+         * @see Id3v2DeclaredFrames.COMM
          */
         Comment,
 
@@ -328,7 +332,7 @@ internal class Id3v2FrameHeader(
 
     companion object {
         /**
-         * 0xFF 00 -> 0xFF
+         * 0xFF 00 -> 0xFF.
          */
         fun synchronizeByteString(byteString: ByteString): ByteString {
             val byteArray = byteString.toByteArray()

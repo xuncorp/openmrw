@@ -63,7 +63,7 @@ class MrwComment {
 }
 
 /**
- * See also [Id3v2DeclaredFrames].
+ * @see Id3v2DeclaredFrames
  */
 enum class MrwCommentField(vararg val field: String) {
     Title(MrwCommentCommonFields.TITLE, Id3v2DeclaredFrames.TIT2),

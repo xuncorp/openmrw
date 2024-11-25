@@ -64,7 +64,7 @@ internal class FlacMrwReader : MrwReader() {
     override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
         val flacMrwFormat = FlacMrwFormat()
 
-        // Skip magic header
+        // Skip magic header.
         source.skip(MAGIC_HEADER.size.toLong())
 
         var flacHeader: FlacHeader
@@ -91,7 +91,7 @@ internal class FlacMrwReader : MrwReader() {
 
     companion object {
         /**
-         * "fLaC"
+         * "fLaC".
          */
         private val MAGIC_HEADER = ByteString(0x66, 0x4C, 0x61, 0x43)
     }

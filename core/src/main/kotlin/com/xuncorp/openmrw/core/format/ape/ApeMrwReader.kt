@@ -39,7 +39,7 @@ internal class ApeMrwReader : MrwReader() {
 
         if (version > 3970u) {
             ApeDescriptor(source)
-            // new header
+            // New header.
             val apeHeader = ApeHeader(source)
             apeMrwFormat.mrwStreamInfo.apply {
                 sampleRate = apeHeader.sampleRate.toInt()
@@ -48,7 +48,7 @@ internal class ApeMrwReader : MrwReader() {
                 sampleCount = apeHeader.sampleCount
             }
         } else {
-            // old header
+            // Old header.
             val apeHeaderOld = ApeHeaderOld(source)
             apeMrwFormat.mrwStreamInfo.apply {
                 sampleRate = apeHeaderOld.sampleRate.toInt()

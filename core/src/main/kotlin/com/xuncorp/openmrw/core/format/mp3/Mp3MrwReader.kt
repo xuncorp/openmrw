@@ -56,13 +56,6 @@ internal class Mp3MrwReader : MrwReader() {
 
             val frameSize = id3V2FrameHeader.frameSize
 
-            println(
-                """
-                    id3V2FrameHeader = $id3V2FrameHeader
-                    frameId = ${id3V2FrameHeader.frameId.decodeToString()}
-                """.trimIndent()
-            )
-
             when (id3V2FrameHeader.frameType) {
                 Id3v2FrameHeader.FrameType.TextInformation -> {
                     val textInformation = id3V2FrameHeader.getTextInformation(source)

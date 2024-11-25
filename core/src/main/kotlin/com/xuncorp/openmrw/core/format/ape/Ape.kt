@@ -47,7 +47,7 @@ internal class ApeCommonHeader(source: Source) {
 
     companion object {
         /**
-         * Common magic header
+         * Common magic header.
          */
         val ID_MAC = ByteString(0x4D, 0x41, 0x43, 0x20)
 
@@ -78,7 +78,7 @@ internal class ApeHeaderOld(source: Source) {
     val finalFrameBlocks = source.readUIntLe()
 
     /**
-     * The number of audio blocks in one frame
+     * The number of audio blocks in one frame.
      */
     val blocksPerFrame =
         if ((version >= 3900u) ||
@@ -141,7 +141,7 @@ internal class ApeHeader(source: Source) {
     val formatFlags = source.readUShortLe()
 
     /**
-     * The number of audio blocks in one frame
+     * The number of audio blocks in one frame.
      */
     val blocksPerFrame = source.readUIntLe()
 

@@ -26,7 +26,7 @@ import kotlinx.io.readString
 import kotlinx.io.readUIntLe
 
 /**
- * @param byteString The first 4 bytes of the metadata block header.
+ * @param byteString the first 4 bytes of the metadata block header.
  */
 internal class FlacHeader(byteString: ByteString) {
     val isLastMetadataBlock = (byteString[0].toInt() and 0b10000000 shr 7) == 1
@@ -56,9 +56,9 @@ internal class FlacHeader(byteString: ByteString) {
 }
 
 /**
- * [FlacHeader.BLOCK_TYPE_STREAMINFO]
- *
  * @param byteString 34 bytes.
+ *
+ * @see FlacHeader.BLOCK_TYPE_STREAMINFO
  */
 internal class FlacStreamInfo(byteString: ByteString) {
     /**
@@ -115,11 +115,11 @@ internal class FlacStreamInfo(byteString: ByteString) {
 }
 
 /**
- * [FlacHeader.BLOCK_TYPE_VORBIS_COMMENT]
+ * FLAC tags, without the framing bit.
  *
- * FLAC tags, without the framing bit
+ * [Ogg Vorbis](https://www.xiph.org/vorbis/doc/v-comment.html).
  *
- * [Ogg Vorbis](https://www.xiph.org/vorbis/doc/v-comment.html)
+ * @see FlacHeader.BLOCK_TYPE_VORBIS_COMMENT
  */
 internal class FlacVorbisComment(source: Source) {
     val vendorString: String

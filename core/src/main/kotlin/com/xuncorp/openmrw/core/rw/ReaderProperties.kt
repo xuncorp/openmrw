@@ -17,14 +17,16 @@
 
 package com.xuncorp.openmrw.core.rw
 
+import com.xuncorp.openmrw.core.rw.id3v2.Id3v2FrameHeader
 import java.nio.charset.Charset
 
 /**
  * Reader properties.
  *
- * @property id3v2Charset In ID3v2 tags, the 0x00 flag indicates that the encoding is ISO_8859_1.
- *   However, many editors use the default encoding of the user's system when writing, such as GBK
- *   or GB18030 in a Chinese environment.
+ * @property id3v2Charset in ID3v2 tags, the 0x00 flag indicates that the encoding is
+ *   [Charsets.ISO_8859_1]. However, many editors use the default encoding of the user's system when
+ *   writing, such as [com.xuncorp.openmrw.core.util.GBK] or [com.xuncorp.openmrw.core.util.GB18030]
+ *   in a Chinese environment. See also [Id3v2FrameHeader].
  */
 data class ReaderProperties(
     val id3v2Charset: Charset = Charsets.ISO_8859_1

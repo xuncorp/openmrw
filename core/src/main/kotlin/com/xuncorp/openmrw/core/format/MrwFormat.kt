@@ -21,12 +21,12 @@ package com.xuncorp.openmrw.core.format
 
 abstract class MrwFormat(val mrwFormatType: MrwFormatType) {
     /**
-     * [MrwStreamInfo]
+     * @see MrwStreamInfo
      */
     val mrwStreamInfo = MrwStreamInfo()
 
     /**
-     * [MrwComment]
+     * @see MrwComment
      */
     val mrwComment = MrwComment()
 
