@@ -4,7 +4,6 @@ import kotlinx.io.bytestring.ByteString
 import org.junit.Test
 
 class Id3v2UtilTest {
-
     @Test
     fun synchronizeByteString_empty() {
         val byteString = ByteString()
@@ -20,5 +19,4 @@ class Id3v2UtilTest {
         val newByteString = Id3v2Util.synchronizeByteString(byteString)
         assert(newByteString == ByteString(0xFF.toByte(), 0xFF.toByte(), 0x00.toByte()))
     }
-
 }
