@@ -6,7 +6,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.xuncorp"
+group = "com.github.xuncorp"
 version = "0.1.0-dev01"
 
 java {

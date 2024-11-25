@@ -1,5 +1,7 @@
 ![OpenMrw](res/openmrw.png)
 
+[![](https://jitpack.io/v/xuncorp/openmrw.svg)](https://jitpack.io/#xuncorp/openmrw)
+
 OpenMrw (Open Metadata Reader Writer), a tool library for the JVM platform.
 
 - **Identify** media files.
