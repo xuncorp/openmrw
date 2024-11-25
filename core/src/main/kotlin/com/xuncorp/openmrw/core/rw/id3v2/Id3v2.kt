@@ -150,7 +150,7 @@ internal class Id3v2ExtendedHeader(source: Source) {
  * consists of a frame header followed by one or more fields containing the actual information.
  */
 @Suppress("SpellCheckingInspection")
-internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
+internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
     /**
      * The frame ID made out of the characters capital A-Z and 0-9. Identifiers beginning with "X",
      * "Y" and "Z" are for experimental use and free for everyone to use, without the need to set
@@ -173,7 +173,8 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
     }
 
     /**
-     * %abc00000 %ijk00000
+     * ID3v2.3.0 %abc00000 %ijk00000.
+     *
      * - a: [tagAlterPreservation]
      * - b: [fileAlterPreservation]
      * - c: [readOnly]
@@ -181,7 +182,16 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      * - j: [encryption]
      * - k: [groupingIdentity]
      *
-     * TODO: ID3v2.4.0 flags.
+     * ID3v2.4.0 %0abc0000 %0h00kmnp.
+     *
+     * - a: [tagAlterPreservation]
+     * - b: [fileAlterPreservation]
+     * - c: [readOnly]
+     * - h: [groupingIdentity]
+     * - k: [compression]
+     * - m: [encryption]
+     * - n: [unsynchronization]
+     * - p: [dataLengthIndicator]
      */
     val flags = source.readByteString(2)
 
@@ -229,10 +239,12 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
                             byteString[1].toInt() and 0xFF == 0xFE &&
                             byteString[2].toInt() and 0xFF == 0x00 &&
                             byteString[3].toInt() and 0xFF == 0x00 -> 4
+
                     byteString[0].toInt() and 0xFF == 0xFE &&
                             byteString[1].toInt() and 0xFF == 0xFF &&
                             byteString[2].toInt() and 0xFF == 0x00 &&
                             byteString[3].toInt() and 0xFF == 0x00 -> 4
+
                     else -> 0
                 }
 
@@ -294,7 +306,11 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      *   frame header.
      * - false: Frame is not compressed.
      */
-    fun compression() = flags[1].toInt() and 0x80 != 0
+    fun compression() = when (id3v2Version) {
+        3 -> flags[1].toInt() and 0x80 != 0
+        4 -> flags[1].toInt() and 0x08 != 0
+        else -> error("Invalid ID3v2 version: $id3v2Version.")
+    }
 
     /**
      * This flag indicates whether or not the frame is encrypted. If set one byte indicating with
@@ -302,7 +318,11 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      *
      * TODO https://id3.org/id3v2.3.0#sec4.26
      */
-    fun encryption() = flags[1].toInt() and 0x40 != 0
+    fun encryption() = when (id3v2Version) {
+        3 -> flags[1].toInt() and 0x40 != 0
+        4 -> flags[1].toInt() and 0x04 != 0
+        else -> error("Invalid ID3v2 version: $id3v2Version.")
+    }
 
     /**
      * This flag indicates whether or not this frame belongs in a group with other frames. If set a
@@ -312,7 +332,25 @@ internal class Id3v2FrameHeader(source: Source, id3v2Version: Int) {
      * - true: Frame contains group information.
      * - false: Frame does not contain group information.
      */
-    fun groupingIdentity() = flags[1].toInt() and 0x20 != 0
+    fun groupingIdentity() = when (id3v2Version) {
+        3 -> flags[1].toInt() and 0x20 != 0
+        4 -> flags[1].toInt() and 0x40 != 0
+        else -> error("Invalid ID3v2 version: $id3v2Version.")
+    }
+
+    /**
+     * - true: Frame has been unsyrchronized.
+     * - false: Frame has not been unsynchronized.
+     */
+    fun unsynchronization(): Boolean {
+        require(id3v2Version == 4) { "Invalid ID3v2 version: $id3v2Version." }
+        return flags[1].toInt() and 0x02 != 0
+    }
+
+    fun dataLengthIndicator(): Boolean {
+        require(id3v2Version == 4) { "Invalid ID3v2 version: $id3v2Version." }
+        return flags[1].toInt() and 0x01 != 0
+    }
 
     fun isPaddingFrame() = frameId == ByteString(0x00, 0x00, 0x00, 0x00)
 
