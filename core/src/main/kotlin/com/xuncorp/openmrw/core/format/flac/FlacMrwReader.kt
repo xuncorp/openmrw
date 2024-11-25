@@ -19,6 +19,7 @@ package com.xuncorp.openmrw.core.format.flac
 
 import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.rw.MrwReader
+import com.xuncorp.openmrw.core.rw.ReaderProperties
 import kotlinx.io.Source
 import kotlinx.io.bytestring.ByteString
 import kotlinx.io.readByteString
@@ -60,7 +61,7 @@ internal class FlacMrwReader : MrwReader() {
         require(magicHeader == MAGIC_HEADER)
     }
 
-    override fun fetch(source: Source): MrwFormat {
+    override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
         val flacMrwFormat = FlacMrwFormat()
 
         // Skip magic header

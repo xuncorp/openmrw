@@ -19,6 +19,7 @@
 
 package com.xuncorp.openmrw.core.rw.id3v2
 
+import com.xuncorp.openmrw.core.rw.ReaderProperties
 import com.xuncorp.openmrw.core.util.first
 import com.xuncorp.openmrw.core.util.last
 import com.xuncorp.openmrw.core.util.lastIndex
@@ -146,9 +147,15 @@ internal class Id3v2ExtendedHeader(source: Source) {
 /**
  * As the tag consists of a tag header and a tag body with one or more frames, all the frames
  * consists of a frame header followed by one or more fields containing the actual information.
+ *
+ * @param id3v2Charset See [ReaderProperties.id3v2Charset] default value [Charsets.ISO_8859_1].
  */
 @Suppress("SpellCheckingInspection")
-internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
+internal class Id3v2FrameHeader(
+    source: Source,
+    private val id3v2Version: Int,
+    private val id3v2Charset: Charset
+) {
     /**
      * The frame ID made out of the characters capital A-Z and 0-9. Identifiers beginning with "X",
      * "Y" and "Z" are for experimental use and free for everyone to use, without the need to set
@@ -198,7 +205,7 @@ internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
     private fun getCharset(textEncoding: Byte): Charset {
         return when (textEncoding.toInt()) {
             // Terminated with 0x00.
-            0x00 -> Charsets.ISO_8859_1
+            0x00 -> id3v2Charset
             // Unicode strings must begin with the Unicode BOM ($FF FE or $FE FF) to identify the
             // byte order. Terminated with 0x00 0x00.
             0x01 -> Charsets.UTF_16
@@ -227,7 +234,7 @@ internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
         //
         // To address this, OpenMrw has added additional checks.
         val textByteString = when (charset) {
-            Charsets.ISO_8859_1, Charsets.UTF_8 -> {
+            id3v2Charset, Charsets.UTF_8 -> {
                 if (synchronizedByteString.last().toInt() == 0x00) {
                     synchronizedByteString.substring(0, synchronizedByteString.size - 1)
                 } else {

@@ -19,6 +19,7 @@ package com.xuncorp.openmrw.core.format.mp3
 
 import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.rw.MrwReader
+import com.xuncorp.openmrw.core.rw.ReaderProperties
 import com.xuncorp.openmrw.core.rw.id3v2.Id3v2ExtendedHeader
 import com.xuncorp.openmrw.core.rw.id3v2.Id3v2FrameHeader
 import com.xuncorp.openmrw.core.rw.id3v2.Id3v2Header
@@ -30,7 +31,7 @@ internal class Mp3MrwReader : MrwReader() {
         Id3v2Header(source)
     }
 
-    override fun fetch(source: Source): MrwFormat {
+    override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
         val mp3MrwFormat = Mp3MrwFormat()
 
         val id3v2Header = Id3v2Header(source)
@@ -45,7 +46,8 @@ internal class Mp3MrwReader : MrwReader() {
         while (readFrameSize < totalId3v2FrameSize) {
             val id3V2FrameHeader = Id3v2FrameHeader(
                 source = source,
-                id3v2Version = id3v2Header.version
+                id3v2Version = id3v2Header.version,
+                id3v2Charset = properties.id3v2Charset
             )
 
             if (id3V2FrameHeader.isPaddingFrame()) {

@@ -15,26 +15,17 @@
  * 02110-1301 USA
  */
 
-@file:Suppress("unused")
-
 package com.xuncorp.openmrw.core.rw
 
-import com.xuncorp.openmrw.core.format.MrwFormat
-import kotlinx.io.Source
+import java.nio.charset.Charset
 
 /**
- * A reader that can read a [MrwFormat] from a [Source].
+ * Reader properties.
+ *
+ * @property id3v2Charset In ID3v2 tags, the 0x00 flag indicates that the encoding is ISO_8859_1.
+ *   However, many editors use the default encoding of the user's system when writing, such as GBK
+ *   or GB18030 in a Chinese environment.
  */
-internal abstract class MrwReader {
-    /**
-     * Returns true if the reader matches the [source].
-     *
-     * Throw an exception if the match fails.
-     */
-    abstract fun match(source: Source)
-
-    /**
-     * Fetches the [MrwFormat] from the [source].
-     */
-    abstract fun fetch(source: Source, properties: ReaderProperties): MrwFormat
-}
+data class ReaderProperties(
+    val id3v2Charset: Charset = Charsets.ISO_8859_1
+)

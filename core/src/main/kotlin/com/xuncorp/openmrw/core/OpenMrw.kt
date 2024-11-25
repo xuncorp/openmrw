@@ -23,8 +23,12 @@ import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.format.ape.ApeMrwReader
 import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
 import com.xuncorp.openmrw.core.format.mp3.Mp3MrwReader
+import com.xuncorp.openmrw.core.rw.ReaderProperties
 import kotlinx.io.Source
 
+/**
+ * OpenMrw (Open Metadata Reader Writer), a tool library for the JVM platform.
+ */
 object OpenMrw {
     private val readers by lazy {
         listOf(
@@ -34,8 +38,16 @@ object OpenMrw {
         )
     }
 
+    /**
+     * Returns the [Result] of [MrwFormat] by [Source].
+     *
+     * @param properties [ReaderProperties].
+     */
     @UnstableOpenMrwApi
-    fun read(source: Source): Result<MrwFormat> = runCatching {
+    fun read(
+        source: Source,
+        properties: ReaderProperties = ReaderProperties()
+    ): Result<MrwFormat> = runCatching {
         for (reader in readers) {
             val matched = source.peek().use { matchSource ->
                 try {
@@ -48,7 +60,7 @@ object OpenMrw {
 
             if (matched) {
                 source.peek().use { fetchSource ->
-                    return@runCatching reader.fetch(fetchSource)
+                    return@runCatching reader.fetch(fetchSource, properties)
                 }
             }
         }
