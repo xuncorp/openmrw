@@ -27,122 +27,7 @@ import kotlinx.io.Source
 import kotlinx.io.bytestring.ByteString
 import kotlinx.io.bytestring.decodeToString
 import kotlinx.io.readByteString
-import kotlinx.io.readUInt
 import java.nio.charset.Charset
-
-/**
- * # ID3v2 Header
- *
- * Should be the first information in the file. 10 bytes.
- *
- * - [ID3 tag version 2.3.0](https://id3.org/id3v2.3.0), informal standard.
- * - [ID3 tag version 2.4.0](https://id3.org/id3v2.4.0-structure), informal standard.
- */
-internal class Id3v2Header(source: Source) {
-    /**
-     * 'I', 'D', '3', 3 bytes.
-     */
-    val identifier = source.readByteString(3)
-
-    /**
-     * 1 byte.
-     *
-     * - 3: ID3v2.3.0
-     * - 4: ID3v2.4.0
-     */
-    val version = source.readByte().toInt() and 0xFF
-
-    /**
-     * 1 byte.
-     */
-    val revision = source.readByte().toInt() and 0xFF
-
-    /**
-     * 1 byte.
-     *
-     * %abcd0000
-     * - a: [unsynchronization]
-     * - b: [extendedHeader]
-     * - c: [experimentalIndicator]
-     * - d: [footerPresent]
-     */
-    val flags = source.readByte()
-
-    /**
-     * 4 bytes.
-     *
-     * The ID3v2tag size (bytes) is the size of the complete tag after un synchronization, including
-     * padding, excluding the header but not excluding the extended header
-     * (total tag size - 10).
-     *
-     * Only 28 bits (representing up to 256MB) are used in the size description to avoid the
-     * introduction of 'false sync signals'.
-     */
-    val size = (source.readByte().toInt() and 0x7F shl 21) or
-            (source.readByte().toInt() and 0x7F shl 14) or
-            (source.readByte().toInt() and 0x7F shl 7) or
-            (source.readByte().toInt() and 0x7F)
-
-    /**
-     * Bit 7 in the 'ID3v2 flags' indicates whether or not unsynchronization is used
-     * (see section 5 for details); a set bit indicates usage.
-     */
-    fun unsynchronization() = flags.toInt() and 0x80 != 0
-
-    /**
-     * The second bit (bit 6) indicates whether or not the header is followed by an extended header.
-     */
-    fun extendedHeader() = flags.toInt() and 0x40 != 0
-
-    /**
-     * The third bit (bit 5) should be used as an 'experimental indicator'. This flag should always
-     * be set when the tag is in an experimental stage.
-     */
-    fun experimentalIndicator() = flags.toInt() and 0x20 != 0
-
-    /**
-     * ID3v2.4.0 only.
-     */
-    fun footerPresent() = version == 4 && flags.toInt() and 0x10 != 0
-
-    init {
-        require(identifier == ByteString(0x49, 0x44, 0x33))
-    }
-
-    override fun toString(): String {
-        return "Id3v2Header(identifier=$identifier, majorVersion=$version, " +
-                "revision=$revision, flags=$flags, size=$size)"
-    }
-}
-
-/**
- * - Extended Header Size: $xx xx xx xx
- * - Extended Flags: $xx xx
- * - Size of Padding: $xx xx xx xx
- * - Total Frame CRC: $xx xx xx xx (Optional)
- */
-internal class Id3v2ExtendedHeader(source: Source) {
-    /**
-     * Where the 'Extended header size', currently 6 or 10 bytes, excludes itself.
-     */
-    val extendedHeaderSize = source.readUInt()
-
-    val extendedFlags = source.readByteString(2)
-
-    val sizeOfPadding = source.readUInt()
-
-    /**
-     * If this flag is set four bytes of CRC-32 data is appended to the extended header.
-     */
-    val crcDataPresent = extendedFlags[0].toInt() and 0x80 != 0
-
-    val totalFrameCrc: ByteString =
-        if (crcDataPresent) {
-            source.readByteString(4)
-        } else {
-            ByteString()
-        }
-}
 
 /**
  * As the tag consists of a tag header and a tag body with one or more frames, all the frames
@@ -223,7 +108,7 @@ internal class Id3v2FrameHeader(
      */
     private fun geActualText(byteString: ByteString, charset: Charset): String {
         val synchronizedByteString = if (unsynchronization()) {
-            Id3v2Util.synchronizeByteString(byteString)
+            synchronizeByteString(byteString)
         } else {
             byteString
         }
@@ -439,5 +324,30 @@ internal class Id3v2FrameHeader(
          * TODO: OpenMrw does not support this frame type yet.
          */
         Unknown
+    }
+
+    companion object {
+        /**
+         * 0xFF 00 -> 0xFF
+         */
+        fun synchronizeByteString(byteString: ByteString): ByteString {
+            val byteArray = byteString.toByteArray()
+            val newByteArray = mutableListOf<Byte>()
+
+            var i = 0
+            while (i < byteArray.size) {
+                val b1 = byteArray[i]
+                val b2 = byteArray.getOrNull(i + 1)
+
+                newByteArray.add(b1)
+
+                if (b1.toInt() and 0xFF == 0xFF && b2 != null && b2.toInt() and 0xFF == 0x00) {
+                    i++
+                }
+                i++
+            }
+
+            return ByteString(newByteArray.toByteArray())
+        }
     }
 }

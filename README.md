@@ -44,6 +44,7 @@ parses files using the read method.
   writers.
     - [id3v2](core/src/main/kotlin/com/xuncorp/openmrw/core/rw/id3v2) ID3v2 tags,
       ID3v2.3.0, ID3v2.4.0.
+- [util](core/src/main/kotlin/com/xuncorp/openmrw/core/util) contains utility functions.
 
 Please refer to the code comments for detailed instructions.
 
