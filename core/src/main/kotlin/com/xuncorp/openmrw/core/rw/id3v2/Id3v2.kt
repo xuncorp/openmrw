@@ -217,58 +217,66 @@ internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
      * terminated string.
      */
     private fun geActualText(byteString: ByteString, charset: Charset): String {
+        val synchronizedByteString = if (unsynchronization()) {
+            Id3v2Util.synchronizeByteString(byteString)
+        } else {
+            byteString
+        }
+
         // In some files, the fields in tags do not end with 0x00 or 0x00 0x00, which differs from
         // the documentation. I suspect this might be due to issues with certain tag writing
         // programs.
         //
         // To address this, OpenMrw has added additional checks.
-        return when (charset) {
+        val textByteString = when (charset) {
             Charsets.ISO_8859_1, Charsets.UTF_8 -> {
-                if (byteString.last().toInt() == 0x00) {
-                    byteString.substring(0, byteString.size - 1).decodeToString(charset)
+                if (synchronizedByteString.last().toInt() == 0x00) {
+                    synchronizedByteString.substring(0, synchronizedByteString.size - 1)
                 } else {
-                    byteString.decodeToString(charset)
+                    synchronizedByteString
                 }
             }
 
             Charsets.UTF_16 -> {
                 // Ignore Unicode NULL [0xFF FE 00 00] [0xFE FF 00 00].
                 val startIndex = when {
-                    byteString.size <= 4 -> 0
-                    byteString[0].toInt() and 0xFF == 0xFF &&
-                            byteString[1].toInt() and 0xFF == 0xFE &&
-                            byteString[2].toInt() and 0xFF == 0x00 &&
-                            byteString[3].toInt() and 0xFF == 0x00 -> 4
+                    synchronizedByteString.size <= 4 -> 0
+                    synchronizedByteString[0].toInt() and 0xFF == 0xFF &&
+                            synchronizedByteString[1].toInt() and 0xFF == 0xFE &&
+                            synchronizedByteString[2].toInt() and 0xFF == 0x00 &&
+                            synchronizedByteString[3].toInt() and 0xFF == 0x00 -> 4
 
-                    byteString[0].toInt() and 0xFF == 0xFE &&
-                            byteString[1].toInt() and 0xFF == 0xFF &&
-                            byteString[2].toInt() and 0xFF == 0x00 &&
-                            byteString[3].toInt() and 0xFF == 0x00 -> 4
+                    synchronizedByteString[0].toInt() and 0xFF == 0xFE &&
+                            synchronizedByteString[1].toInt() and 0xFF == 0xFF &&
+                            synchronizedByteString[2].toInt() and 0xFF == 0x00 &&
+                            synchronizedByteString[3].toInt() and 0xFF == 0x00 -> 4
 
                     else -> 0
                 }
 
-                if (byteString.last().toInt() and 0xFF == 0x00 &&
-                    byteString[byteString.lastIndex - 1].toInt() and 0xFF == 0x00
+                if (synchronizedByteString.last().toInt() and 0xFF == 0x00 &&
+                    synchronizedByteString[synchronizedByteString.lastIndex - 1].toInt() and 0xFF == 0x00
                 ) {
-                    byteString.substring(startIndex, byteString.size - 2).decodeToString(charset)
+                    synchronizedByteString.substring(startIndex, synchronizedByteString.size - 2)
                 } else {
-                    byteString.substring(startIndex).decodeToString(charset)
+                    synchronizedByteString.substring(startIndex)
                 }
             }
 
             Charsets.UTF_16BE -> {
-                if (byteString.last().toInt() and 0xFF == 0x00 &&
-                    byteString[byteString.lastIndex - 1].toInt() and 0xFF == 0x00
+                if (synchronizedByteString.last().toInt() and 0xFF == 0x00 &&
+                    synchronizedByteString[synchronizedByteString.lastIndex - 1].toInt() and 0xFF == 0x00
                 ) {
-                    byteString.substring(0, byteString.size - 2).decodeToString(charset)
+                    synchronizedByteString.substring(0, synchronizedByteString.size - 2)
                 } else {
-                    byteString.decodeToString(charset)
+                    synchronizedByteString
                 }
             }
 
             else -> error("Invalid charset: $charset.")
         }
+
+        return textByteString.decodeToString(charset)
     }
 
     /**
@@ -342,15 +350,9 @@ internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
      * - true: Frame has been unsyrchronized.
      * - false: Frame has not been unsynchronized.
      */
-    fun unsynchronization(): Boolean {
-        require(id3v2Version == 4) { "Invalid ID3v2 version: $id3v2Version." }
-        return flags[1].toInt() and 0x02 != 0
-    }
+    fun unsynchronization() = id3v2Version == 4 && flags[1].toInt() and 0x02 != 0
 
-    fun dataLengthIndicator(): Boolean {
-        require(id3v2Version == 4) { "Invalid ID3v2 version: $id3v2Version." }
-        return flags[1].toInt() and 0x01 != 0
-    }
+    fun dataLengthIndicator() = id3v2Version == 4 && flags[1].toInt() and 0x01 != 0
 
     fun isPaddingFrame() = frameId == ByteString(0x00, 0x00, 0x00, 0x00)
 
@@ -359,9 +361,17 @@ internal class Id3v2FrameHeader(source: Source, private val id3v2Version: Int) {
      */
     fun getTextInformation(source: Source): String {
         require(frameType == FrameType.TextInformation)
+        // TODO: Use data length indicator.
+        val byteCount = if (dataLengthIndicator()) {
+            source.skip(4L)
+            frameSize - 5
+        } else {
+            frameSize - 1
+        }
         val textEncoding = source.readByte()
         val charset = getCharset(textEncoding)
-        val byteString = source.readByteString(frameSize - 1)
+
+        val byteString = source.readByteString(byteCount)
         return geActualText(byteString, charset)
     }
 
