@@ -165,3 +165,7 @@ internal class ApeHeader(source: Source) {
                 "sampleRate=$sampleRate)"
     }
 }
+
+internal class ApeTag(source: Source) {
+
+}
