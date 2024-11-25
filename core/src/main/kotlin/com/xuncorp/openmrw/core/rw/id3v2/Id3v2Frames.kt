@@ -154,7 +154,7 @@ internal object Id3v2DeclaredFrames {
     const val TCOM = "TCOM"
 
     /**
-     * Content type.
+     * Genre. Content type.
      */
     const val TCON = "TCON"
 

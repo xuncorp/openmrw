@@ -62,13 +62,16 @@ class MrwComment {
     }
 }
 
+/**
+ * See also [Id3v2DeclaredFrames].
+ */
 enum class MrwCommentField(vararg val field: String) {
     Title(MrwCommentCommonFields.TITLE, Id3v2DeclaredFrames.TIT2),
     Artist(MrwCommentCommonFields.ARTIST, Id3v2DeclaredFrames.TPE1),
     Album(MrwCommentCommonFields.ALBUM, Id3v2DeclaredFrames.TALB),
-    AlbumArtist(MrwCommentCommonFields.ALBUMARTIST),
-    Genre(MrwCommentCommonFields.GENRE),
-    Lyrics(MrwCommentCommonFields.LYRICS);
+    AlbumArtist(MrwCommentCommonFields.ALBUMARTIST, Id3v2DeclaredFrames.TPE2),
+    Genre(MrwCommentCommonFields.GENRE, Id3v2DeclaredFrames.TCON),
+    Lyrics(MrwCommentCommonFields.LYRICS, Id3v2DeclaredFrames.SYLT, Id3v2DeclaredFrames.USLT);
 
     companion object {
         const val SEPARATOR = "/"
