@@ -59,10 +59,11 @@ internal class Id3v2Header(source: Source) {
     /**
      * 1 byte.
      *
-     * %abc00000
+     * %abcd0000
      * - a: [unsynchronization]
      * - b: [extendedHeader]
      * - c: [experimentalIndicator]
+     * - d: [footerPresent]
      */
     val flags = source.readByte()
 
@@ -101,10 +102,7 @@ internal class Id3v2Header(source: Source) {
     /**
      * ID3v2.4.0 only.
      */
-    fun footerPresent(): Boolean {
-        require(version == 4)
-        return flags.toInt() and 0x10 != 0
-    }
+    fun footerPresent() = version == 4 && flags.toInt() and 0x10 != 0
 
     init {
         require(identifier == ByteString(0x49, 0x44, 0x33))
