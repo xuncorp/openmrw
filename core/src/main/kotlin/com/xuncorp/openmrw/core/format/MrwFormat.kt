@@ -19,7 +19,7 @@
 
 package com.xuncorp.openmrw.core.format
 
-abstract class MrwFormat(val mrwFormatType: MrwFormatType) {
+open class MrwFormat(val mrwFormatType: MrwFormatType) {
     /**
      * @see MrwStreamInfo
      */

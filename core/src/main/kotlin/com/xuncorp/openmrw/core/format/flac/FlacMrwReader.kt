@@ -18,6 +18,7 @@
 package com.xuncorp.openmrw.core.format.flac
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
 import kotlinx.io.Source
@@ -28,11 +29,11 @@ internal class FlacMrwReader : MrwReader() {
     private fun readStreamInfo(
         source: Source,
         flacHeader: FlacHeader,
-        flacMrwFormat: FlacMrwFormat
+        mrwFormat: MrwFormat
     ) {
         val flacStreamInfo = FlacStreamInfo(source.readByteString(flacHeader.length))
 
-        flacMrwFormat.mrwStreamInfo.apply {
+        mrwFormat.mrwStreamInfo.apply {
             sampleRate = flacStreamInfo.sampleRate
             channelCount = flacStreamInfo.channelCount
             bits = flacStreamInfo.bits
@@ -42,7 +43,7 @@ internal class FlacMrwReader : MrwReader() {
 
     private fun readVorbisComment(
         source: Source,
-        flacMrwFormat: FlacMrwFormat
+        mrwFormat: MrwFormat
     ) {
         val flacVorbisComment = FlacVorbisComment(source)
 
@@ -51,7 +52,7 @@ internal class FlacMrwReader : MrwReader() {
             if (parts.size == 2) {
                 val field = parts[0].trim()
                 val value = parts[1].trim()
-                flacMrwFormat.mrwComment.add(field, value)
+                mrwFormat.mrwComment.add(field, value)
             }
         }
     }
@@ -62,7 +63,7 @@ internal class FlacMrwReader : MrwReader() {
     }
 
     override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
-        val flacMrwFormat = FlacMrwFormat()
+        val mrwFormat = MrwFormat(MrwFormatType.Flac)
 
         // Skip magic header.
         source.skip(MAGIC_HEADER.size.toLong())
@@ -75,10 +76,10 @@ internal class FlacMrwReader : MrwReader() {
                 FlacHeader.BLOCK_TYPE_STREAMINFO -> readStreamInfo(
                     source,
                     flacHeader,
-                    flacMrwFormat
+                    mrwFormat
                 )
 
-                FlacHeader.BLOCK_TYPE_VORBIS_COMMENT -> readVorbisComment(source, flacMrwFormat)
+                FlacHeader.BLOCK_TYPE_VORBIS_COMMENT -> readVorbisComment(source, mrwFormat)
 
                 else -> {
                     source.skip(flacHeader.length.toLong())
@@ -86,7 +87,7 @@ internal class FlacMrwReader : MrwReader() {
             }
         } while (!flacHeader.isLastMetadataBlock)
 
-        return flacMrwFormat
+        return mrwFormat
     }
 
     companion object {

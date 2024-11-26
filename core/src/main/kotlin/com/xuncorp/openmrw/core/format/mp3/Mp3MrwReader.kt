@@ -18,6 +18,7 @@
 package com.xuncorp.openmrw.core.format.mp3
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
 import com.xuncorp.openmrw.core.rw.id3v2.Id3v2ExtendedHeader
@@ -31,7 +32,7 @@ internal class Mp3MrwReader : MrwReader() {
     private fun readId3v2(
         source: Source,
         id3v2Charset: Charset,
-        mp3MrwFormat: MrwFormat
+        mrwFormat: MrwFormat
     ) = runCatching {
         val id3v2Header = Id3v2Header(source)
         val id3v2ExtendedHeaderSize = if (id3v2Header.extendedHeader()) {
@@ -59,7 +60,7 @@ internal class Mp3MrwReader : MrwReader() {
             when (id3V2FrameHeader.frameType) {
                 Id3v2FrameHeader.FrameType.TextInformation -> {
                     val textInformation = id3V2FrameHeader.getTextInformation(source)
-                    mp3MrwFormat.mrwComment.add(
+                    mrwFormat.mrwComment.add(
                         field = id3V2FrameHeader.frameId.decodeToString(),
                         value = textInformation
                     )
@@ -67,7 +68,7 @@ internal class Mp3MrwReader : MrwReader() {
 
                 Id3v2FrameHeader.FrameType.UnsynchronizedLyrics -> {
                     val unsynchronizedLyrics = id3V2FrameHeader.getUnsynchronizedLyrics(source)
-                    mp3MrwFormat.mrwComment.add(
+                    mrwFormat.mrwComment.add(
                         field = id3V2FrameHeader.frameId.decodeToString(),
                         value = unsynchronizedLyrics
                     )
@@ -75,7 +76,7 @@ internal class Mp3MrwReader : MrwReader() {
 
                 Id3v2FrameHeader.FrameType.Comment -> {
                     val comment = id3V2FrameHeader.getComment(source)
-                    mp3MrwFormat.mrwComment.add(
+                    mrwFormat.mrwComment.add(
                         field = id3V2FrameHeader.frameId.decodeToString(),
                         value = comment
                     )
@@ -99,17 +100,17 @@ internal class Mp3MrwReader : MrwReader() {
     }
 
     override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
-        val mp3MrwFormat = Mp3MrwFormat()
+        val mrwFormat = MrwFormat(MrwFormatType.Mp3)
 
         // Some MP3 files may have multiple ID3v2 tags.
         while (true) {
             readId3v2(
                 source = source,
                 id3v2Charset = properties.id3v2Charset,
-                mp3MrwFormat = mp3MrwFormat
+                mrwFormat = mrwFormat
             ).getOrNull() ?: break
         }
 
-        return mp3MrwFormat
+        return mrwFormat
     }
 }

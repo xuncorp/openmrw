@@ -18,6 +18,7 @@
 package com.xuncorp.openmrw.core.format.ape
 
 import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
 import kotlinx.io.Source
@@ -32,7 +33,7 @@ internal class ApeMrwReader : MrwReader() {
     }
 
     override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
-        val apeMrwFormat = ApeMrwFormat()
+        val mrwFormat = MrwFormat(MrwFormatType.Ape)
 
         val apeCommonHeader = ApeCommonHeader(source.peek())
         val version = apeCommonHeader.version
@@ -41,7 +42,7 @@ internal class ApeMrwReader : MrwReader() {
             ApeDescriptor(source)
             // New header.
             val apeHeader = ApeHeader(source)
-            apeMrwFormat.mrwStreamInfo.apply {
+            mrwFormat.mrwStreamInfo.apply {
                 sampleRate = apeHeader.sampleRate.toInt()
                 channelCount = apeHeader.channels.toInt()
                 bits = apeHeader.bitsPerSample.toInt()
@@ -50,7 +51,7 @@ internal class ApeMrwReader : MrwReader() {
         } else {
             // Old header.
             val apeHeaderOld = ApeHeaderOld(source)
-            apeMrwFormat.mrwStreamInfo.apply {
+            mrwFormat.mrwStreamInfo.apply {
                 sampleRate = apeHeaderOld.sampleRate.toInt()
                 channelCount = apeHeaderOld.channels.toInt()
                 bits = apeHeaderOld.bits
@@ -58,6 +59,6 @@ internal class ApeMrwReader : MrwReader() {
             }
         }
 
-        return apeMrwFormat
+        return mrwFormat
     }
 }
