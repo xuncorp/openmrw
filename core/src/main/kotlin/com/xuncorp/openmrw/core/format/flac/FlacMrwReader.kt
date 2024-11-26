@@ -25,7 +25,7 @@ import kotlinx.io.bytestring.ByteString
 import kotlinx.io.readByteString
 
 internal class FlacMrwReader : MrwReader() {
-    private fun handleStreamInfo(
+    private fun readStreamInfo(
         source: Source,
         flacHeader: FlacHeader,
         flacMrwFormat: FlacMrwFormat
@@ -40,7 +40,7 @@ internal class FlacMrwReader : MrwReader() {
         }
     }
 
-    private fun handleVorbisComment(
+    private fun readVorbisComment(
         source: Source,
         flacMrwFormat: FlacMrwFormat
     ) {
@@ -72,13 +72,13 @@ internal class FlacMrwReader : MrwReader() {
             flacHeader = FlacHeader(source.readByteString(4))
 
             when (flacHeader.blockType) {
-                FlacHeader.BLOCK_TYPE_STREAMINFO -> handleStreamInfo(
+                FlacHeader.BLOCK_TYPE_STREAMINFO -> readStreamInfo(
                     source,
                     flacHeader,
                     flacMrwFormat
                 )
 
-                FlacHeader.BLOCK_TYPE_VORBIS_COMMENT -> handleVorbisComment(source, flacMrwFormat)
+                FlacHeader.BLOCK_TYPE_VORBIS_COMMENT -> readVorbisComment(source, flacMrwFormat)
 
                 else -> {
                     source.skip(flacHeader.length.toLong())
