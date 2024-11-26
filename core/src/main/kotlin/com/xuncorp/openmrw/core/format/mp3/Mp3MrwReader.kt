@@ -25,15 +25,14 @@ import com.xuncorp.openmrw.core.rw.id3v2.Id3v2FrameHeader
 import com.xuncorp.openmrw.core.rw.id3v2.Id3v2Header
 import kotlinx.io.Source
 import kotlinx.io.bytestring.decodeToString
+import java.nio.charset.Charset
 
 internal class Mp3MrwReader : MrwReader() {
-    override fun match(source: Source) {
-        Id3v2Header(source)
-    }
-
-    override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
-        val mp3MrwFormat = Mp3MrwFormat()
-
+    private fun readId3v2(
+        source: Source,
+        id3v2Charset: Charset,
+        mp3MrwFormat: MrwFormat
+    ) = runCatching {
         val id3v2Header = Id3v2Header(source)
         val id3v2ExtendedHeaderSize = if (id3v2Header.extendedHeader()) {
             Id3v2ExtendedHeader(source).extendedHeaderSize.toInt() + 4
@@ -47,10 +46,11 @@ internal class Mp3MrwReader : MrwReader() {
             val id3V2FrameHeader = Id3v2FrameHeader(
                 source = source,
                 id3v2Version = id3v2Header.version,
-                id3v2Charset = properties.id3v2Charset
+                id3v2Charset = id3v2Charset
             )
 
             if (id3V2FrameHeader.isPaddingFrame()) {
+                readFrameSize += Id3v2Header.SIZE
                 break
             }
 
@@ -86,7 +86,28 @@ internal class Mp3MrwReader : MrwReader() {
                 }
             }
 
-            readFrameSize += frameSize + 10
+            readFrameSize += frameSize + Id3v2Header.SIZE
+        }
+
+        // Skip padding.
+        val paddingSize = totalId3v2FrameSize - readFrameSize
+        source.skip(paddingSize.toLong())
+    }
+
+    override fun match(source: Source) {
+        Id3v2Header(source)
+    }
+
+    override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
+        val mp3MrwFormat = Mp3MrwFormat()
+
+        // Some MP3 files may have multiple ID3v2 tags.
+        while (true) {
+            readId3v2(
+                source = source,
+                id3v2Charset = properties.id3v2Charset,
+                mp3MrwFormat = mp3MrwFormat
+            ).getOrNull() ?: break
         }
 
         return mp3MrwFormat

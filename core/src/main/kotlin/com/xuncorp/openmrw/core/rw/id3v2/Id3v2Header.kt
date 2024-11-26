@@ -99,13 +99,17 @@ internal class Id3v2Header(source: Source) {
      */
     fun footerPresent() = version == 4 && flags.toInt() and 0x10 != 0
 
+    override fun toString(): String {
+        return "Id3v2Header(identifier=$identifier, majorVersion=$version, " +
+                "revision=$revision, flags=$flags, size=$size)"
+    }
+
     init {
         require(identifier == ByteString(0x49, 0x44, 0x33))
     }
 
-    override fun toString(): String {
-        return "Id3v2Header(identifier=$identifier, majorVersion=$version, " +
-                "revision=$revision, flags=$flags, size=$size)"
+    companion object {
+        const val SIZE = 10
     }
 }
 
