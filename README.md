@@ -13,7 +13,7 @@ environments.**
 
 ## Media Format Support
 
-FLAC, APE, MP3.
+FLAC, APE, MP3, etc.
 
 See [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormatType.kt).
 
@@ -27,9 +27,6 @@ parses files using the read method.
 
 - [format](core/src/main/kotlin/com/xuncorp/openmrw/core/format) folder contains the handling of
   various file types.
-    - [ape](core/src/main/kotlin/com/xuncorp/openmrw/core/format/ape) Monkey's Audio.
-    - [flac](core/src/main/kotlin/com/xuncorp/openmrw/core/format/flac) Free Lossless Audio Codec.
-    - [mp3](core/src/main/kotlin/com/xuncorp/openmrw/core/format/mp3) MPEG-1 Audio Layer 3.
     - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for
       audio tag information; for instance, FLAC comments read will be
       converted into this.

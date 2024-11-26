@@ -23,6 +23,7 @@ import com.xuncorp.openmrw.core.format.MrwFormat
 import com.xuncorp.openmrw.core.format.ape.ApeMrwReader
 import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
 import com.xuncorp.openmrw.core.format.mp3.Mp3MrwReader
+import com.xuncorp.openmrw.core.format.ncm.NcmMrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
 import kotlinx.io.Source
 
@@ -30,11 +31,15 @@ import kotlinx.io.Source
  * OpenMrw (Open Metadata Reader Writer), a tool library for the JVM platform.
  */
 object OpenMrw {
+    /**
+     * TODO: Currently, sorting by the prevalence of possible formats, and will try other later.
+     */
     private val readers by lazy {
         listOf(
+            Mp3MrwReader(),
             FlacMrwReader(),
             ApeMrwReader(),
-            Mp3MrwReader()
+            NcmMrwReader()
         )
     }
 

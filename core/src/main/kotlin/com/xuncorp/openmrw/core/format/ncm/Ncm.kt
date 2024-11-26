@@ -15,37 +15,17 @@
  * 02110-1301 USA
  */
 
-@file:Suppress("unused")
+package com.xuncorp.openmrw.core.format.ncm
 
-package com.xuncorp.openmrw.core.format
+import kotlinx.io.Source
+import kotlinx.io.bytestring.ByteString
+import kotlinx.io.readByteString
 
-enum class MrwFormatType {
-    /**
-     * # Free Lossless Audio Codec
-     *
-     * @since 0.1.0-dev01 2024/11/20
-     */
-    Flac,
+internal class NcmHeader(source: Source) {
+    private val header = source.readByteString(8)
 
-    /**
-     * # Monkey's Audio
-     *
-     * [Official Site](https://monkeysaudio.com/)
-     *
-     * @since 0.1.0-dev01 2024/11/20
-     */
-    Ape,
-
-    /**
-     * # MPEG-1 Audio Layer 3
-     *
-     * @since 0.1.0-dev01 2024/11/21
-     */
-    Mp3,
-
-    /**
-     * # NetEase Cloud Music
-     * @since 0.1.0-dev04 2024/11/26
-     */
-    Ncm
+    init {
+        // 'C', 'T', 'E', 'N', 'F', 'D', 'A'.
+        require(header ==  ByteString(0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D))
+    }
 }
