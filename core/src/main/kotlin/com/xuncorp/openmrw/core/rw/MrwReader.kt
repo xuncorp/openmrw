@@ -19,11 +19,11 @@
 
 package com.xuncorp.openmrw.core.rw
 
-import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFile
 import kotlinx.io.Source
 
 /**
- * A reader that can read a [MrwFormat] from a [Source].
+ * A reader that can read a [MrwFile] from a [Source].
  */
 internal abstract class MrwReader {
     /**
@@ -34,7 +34,7 @@ internal abstract class MrwReader {
     abstract fun match(source: Source)
 
     /**
-     * Fetches the [MrwFormat] from the [source].
+     * Fetches the [MrwFile] from the [source].
      */
-    abstract fun fetch(source: Source, properties: ReaderProperties): MrwFormat
+    abstract fun fetch(source: Source, properties: ReaderProperties): MrwFile
 }

@@ -1,6 +1,6 @@
 package com.xuncorp.openmrw.core.format.ncm
 
-import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFile
 import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
@@ -11,7 +11,7 @@ internal class NcmMrwReader : MrwReader() {
         NcmHeader(source)
     }
 
-    override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
-        return MrwFormat(MrwFormatType.Ncm)
+    override fun fetch(source: Source, properties: ReaderProperties): MrwFile {
+        return MrwFile(MrwFormatType.Ncm)
     }
 }

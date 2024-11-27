@@ -19,7 +19,7 @@
 
 package com.xuncorp.openmrw.core
 
-import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFile
 import com.xuncorp.openmrw.core.format.ape.ApeMrwReader
 import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
 import com.xuncorp.openmrw.core.format.mp3.Mp3MrwReader
@@ -44,7 +44,7 @@ object OpenMrw {
     }
 
     /**
-     * Returns the [Result] of [MrwFormat] by [Source].
+     * Returns the [Result] of [MrwFile] by [Source].
      *
      * @param properties [ReaderProperties].
      */
@@ -52,7 +52,7 @@ object OpenMrw {
     fun read(
         source: Source,
         properties: ReaderProperties = ReaderProperties()
-    ): Result<MrwFormat> = runCatching {
+    ): Result<MrwFile> = runCatching {
         for (reader in readers) {
             val matched = source.peek().use { matchSource ->
                 try {

@@ -17,7 +17,7 @@
 
 package com.xuncorp.openmrw.core.format.ape
 
-import com.xuncorp.openmrw.core.format.MrwFormat
+import com.xuncorp.openmrw.core.format.MrwFile
 import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
@@ -32,8 +32,8 @@ internal class ApeMrwReader : MrwReader() {
         )
     }
 
-    override fun fetch(source: Source, properties: ReaderProperties): MrwFormat {
-        val mrwFormat = MrwFormat(MrwFormatType.Ape)
+    override fun fetch(source: Source, properties: ReaderProperties): MrwFile {
+        val mrwFile = MrwFile(MrwFormatType.Ape)
 
         val apeCommonHeader = ApeCommonHeader(source.peek())
         val version = apeCommonHeader.version
@@ -42,7 +42,7 @@ internal class ApeMrwReader : MrwReader() {
             ApeDescriptor(source)
             // New header.
             val apeHeader = ApeHeader(source)
-            mrwFormat.mrwStreamInfo.apply {
+            mrwFile.mrwStreamInfo.apply {
                 sampleRate = apeHeader.sampleRate.toInt()
                 channelCount = apeHeader.channels.toInt()
                 bits = apeHeader.bitsPerSample.toInt()
@@ -51,7 +51,7 @@ internal class ApeMrwReader : MrwReader() {
         } else {
             // Old header.
             val apeHeaderOld = ApeHeaderOld(source)
-            mrwFormat.mrwStreamInfo.apply {
+            mrwFile.mrwStreamInfo.apply {
                 sampleRate = apeHeaderOld.sampleRate.toInt()
                 channelCount = apeHeaderOld.channels.toInt()
                 bits = apeHeaderOld.bits
@@ -59,6 +59,6 @@ internal class ApeMrwReader : MrwReader() {
             }
         }
 
-        return mrwFormat
+        return mrwFile
     }
 }
