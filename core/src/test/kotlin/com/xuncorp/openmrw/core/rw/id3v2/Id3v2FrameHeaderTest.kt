@@ -1,5 +1,6 @@
 package com.xuncorp.openmrw.core.rw.id3v2
 
+import com.xuncorp.openmrw.core.rw.tag.id3v2.Id3v2FrameHeader
 import kotlinx.io.bytestring.ByteString
 import org.junit.Test
 

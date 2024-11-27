@@ -17,7 +17,7 @@
 
 package com.xuncorp.openmrw.core.rw
 
-import com.xuncorp.openmrw.core.rw.id3v2.Id3v2FrameHeader
+import com.xuncorp.openmrw.core.rw.tag.id3v2.Id3v2FrameHeader
 import java.nio.charset.Charset
 
 /**

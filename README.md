@@ -35,8 +35,9 @@ parses files using the read method.
 - [rw](core/src/main/kotlin/com/xuncorp/openmrw/core/rw) folder is for read-write operations, which
   includes abstract classes for readers and
   writers.
-    - [id3v2](core/src/main/kotlin/com/xuncorp/openmrw/core/rw/id3v2) ID3v2 tags,
-      ID3v2.3.0, ID3v2.4.0.
+    - [tag](core/src/main/kotlin/com/xuncorp/openmrw/core/rw/tag)
+        - [id3v2](core/src/main/kotlin/com/xuncorp/openmrw/core/rw/tag/id3v2) ID3v2 tags,
+          ID3v2.3.0, ID3v2.4.0.
 - [util](core/src/main/kotlin/com/xuncorp/openmrw/core/util) contains utility functions.
 - [MrwFile.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/MrwFile.kt) is an
   abstract class for the obtained file information.

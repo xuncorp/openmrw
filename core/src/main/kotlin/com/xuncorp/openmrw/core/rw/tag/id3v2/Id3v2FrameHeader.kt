@@ -17,7 +17,7 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.xuncorp.openmrw.core.rw.id3v2
+package com.xuncorp.openmrw.core.rw.tag.id3v2
 
 import com.xuncorp.openmrw.core.rw.ReaderProperties
 import com.xuncorp.openmrw.core.util.first

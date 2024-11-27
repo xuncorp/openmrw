@@ -17,7 +17,7 @@
 
 @file:Suppress("unused", "SpellCheckingInspection")
 
-package com.xuncorp.openmrw.core.rw.id3v2
+package com.xuncorp.openmrw.core.rw.tag.id3v2
 
 /**
  * ID3v2.3.0 frames.
