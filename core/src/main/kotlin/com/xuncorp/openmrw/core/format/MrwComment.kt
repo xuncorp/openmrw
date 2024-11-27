@@ -71,7 +71,8 @@ enum class MrwCommentField(vararg val field: String) {
     Album(MrwCommentCommonFields.ALBUM, Id3v2DeclaredFrames.TALB),
     AlbumArtist(MrwCommentCommonFields.ALBUMARTIST, Id3v2DeclaredFrames.TPE2),
     Genre(MrwCommentCommonFields.GENRE, Id3v2DeclaredFrames.TCON),
-    Lyrics(MrwCommentCommonFields.LYRICS, Id3v2DeclaredFrames.SYLT, Id3v2DeclaredFrames.USLT);
+    Lyrics(MrwCommentCommonFields.LYRICS, Id3v2DeclaredFrames.SYLT, Id3v2DeclaredFrames.USLT),
+    TrackNumber(MrwCommentCommonFields.TRACKNUMBER, Id3v2DeclaredFrames.TRCK);
 
     companion object {
         const val SEPARATOR = "/"
@@ -88,4 +89,5 @@ object MrwCommentCommonFields {
     const val ALBUMARTIST = "ALBUMARTIST"
     const val GENRE = "GENRE"
     const val LYRICS = "LYRICS"
+    const val TRACKNUMBER = "TRACKNUMBER"
 }
