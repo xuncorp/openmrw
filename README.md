@@ -15,7 +15,7 @@ environments.**
 
 FLAC, APE, MP3, etc.
 
-See [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormatType.kt).
+See [MrwFileType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/MrwFileType.kt).
 
 ## Project Structure
 
@@ -30,10 +30,6 @@ parses files using the read method.
     - [MrwComment.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwComment.kt) is for
       audio tag information; for instance, FLAC comments read will be
       converted into this.
-    - [MrwFormat.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormat.kt) is an
-      abstract class for the obtained file information.
-    - [MrwFormatType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwFormatType.kt)
-      contains the supported formats.
     - [MrwStreamInfo.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/format/MrwStreamInfo.kt) is
       for stream information.
 - [rw](core/src/main/kotlin/com/xuncorp/openmrw/core/rw) folder is for read-write operations, which
@@ -42,6 +38,10 @@ parses files using the read method.
     - [id3v2](core/src/main/kotlin/com/xuncorp/openmrw/core/rw/id3v2) ID3v2 tags,
       ID3v2.3.0, ID3v2.4.0.
 - [util](core/src/main/kotlin/com/xuncorp/openmrw/core/util) contains utility functions.
+- [MrwFile.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/MrwFile.kt) is an
+  abstract class for the obtained file information.
+- [MrwFileType.kt](core/src/main/kotlin/com/xuncorp/openmrw/core/MrwFileType.kt)
+  contains the supported formats.
 
 Please refer to the code comments for detailed instructions.
 
