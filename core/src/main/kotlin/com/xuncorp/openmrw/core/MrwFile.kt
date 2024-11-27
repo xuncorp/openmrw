@@ -20,10 +20,9 @@
 package com.xuncorp.openmrw.core
 
 import com.xuncorp.openmrw.core.format.MrwComment
-import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.format.MrwStreamInfo
 
-open class MrwFile(val mrwFormatType: MrwFormatType) {
+open class MrwFile(val fileType: MrwFileType) {
     /**
      * @see MrwStreamInfo
      */
@@ -35,7 +34,7 @@ open class MrwFile(val mrwFormatType: MrwFormatType) {
     val mrwComment = MrwComment()
 
     override fun toString(): String {
-        return "MrwFile(mrwFormatType=$mrwFormatType, mrwStreamInfo=$mrwStreamInfo, " +
+        return "MrwFile(fileType=$fileType, mrwStreamInfo=$mrwStreamInfo, " +
                 "mrwComment=$mrwComment)"
     }
 }

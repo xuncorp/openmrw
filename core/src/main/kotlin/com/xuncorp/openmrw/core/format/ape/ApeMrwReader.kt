@@ -18,7 +18,7 @@
 package com.xuncorp.openmrw.core.format.ape
 
 import com.xuncorp.openmrw.core.MrwFile
-import com.xuncorp.openmrw.core.format.MrwFormatType
+import com.xuncorp.openmrw.core.MrwFileType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
 import kotlinx.io.Source
@@ -33,7 +33,7 @@ internal class ApeMrwReader : MrwReader() {
     }
 
     override fun fetch(source: Source, properties: ReaderProperties): MrwFile {
-        val mrwFile = MrwFile(MrwFormatType.Ape)
+        val mrwFile = MrwFile(MrwFileType.Ape)
 
         val apeCommonHeader = ApeCommonHeader(source.peek())
         val version = apeCommonHeader.version

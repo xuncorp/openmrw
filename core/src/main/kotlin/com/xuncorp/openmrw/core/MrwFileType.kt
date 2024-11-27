@@ -17,9 +17,9 @@
 
 @file:Suppress("unused")
 
-package com.xuncorp.openmrw.core.format
+package com.xuncorp.openmrw.core
 
-enum class MrwFormatType {
+enum class MrwFileType {
     /**
      * # Free Lossless Audio Codec
      *
