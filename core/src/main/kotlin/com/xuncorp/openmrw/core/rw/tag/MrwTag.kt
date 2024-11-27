@@ -17,55 +17,55 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.xuncorp.openmrw.core.format
+package com.xuncorp.openmrw.core.rw.tag
 
 import com.xuncorp.openmrw.core.UnstableOpenMrwApi
 import com.xuncorp.openmrw.core.rw.tag.id3v2.Id3v2DeclaredFrames
 
-class MrwComment {
+class MrwTag {
     /**
-     * The comment fields.
+     * The field with value.
      *
      * The reason for using a [List] instead of a [Map] is to allow multiple identical tags, such as
      * multiple ARTIST representing multiple artists, which is commonly used in FLAC Comments, but
      * OpenMrw does not recommend this writing style and recommends using separator.
      */
-    private val comments = mutableListOf<Pair<String, String>>()
+    private val values = mutableListOf<Pair<String, String>>()
 
     internal fun add(field: String, value: String) {
-        comments.add(field to value)
+        values.add(field to value)
     }
 
     fun get(field: String): List<String> {
-        return comments.filter { it.first == field }.map { it.second }
+        return values.filter { it.first == field }.map { it.second }
     }
 
     /**
-     * Returns the comment value of the specified [MrwCommentField], multiple original fields will
-     * be merged, separated by [MrwCommentField.SEPARATOR].
+     * Returns the comment value of the specified [MrwTagField], multiple original fields will
+     * be merged, separated by [MrwTagField.SEPARATOR].
      */
     @UnstableOpenMrwApi
-    fun get(mrwCommentField: MrwCommentField): String {
-        return comments
-            .filter { it.first in mrwCommentField.field }
+    fun get(field: MrwTagField): String {
+        return values
+            .filter { it.first in field.field }
             // TODO: Is it only the artist and genre fields that should be concatenated with
             //   delimiters, while other fields are allowed only one value?
-            .joinToString(MrwCommentField.SEPARATOR) { it.second }
+            .joinToString(MrwTagField.SEPARATOR) { it.second }
     }
 
     fun getAll(): List<Pair<String, String>> {
-        return comments
+        return values
     }
 
     override fun toString(): String {
-        return "MrwComment(comments=$comments)"
+        return "MrwTag(values=$values)"
     }
 }
 
 /**
  * @see Id3v2DeclaredFrames
  */
-enum class MrwCommentField(vararg val field: String) {
+enum class MrwTagField(vararg val field: String) {
     Title(MrwCommentCommonFields.TITLE, Id3v2DeclaredFrames.TIT2),
     Artist(MrwCommentCommonFields.ARTIST, Id3v2DeclaredFrames.TPE1),
     Album(MrwCommentCommonFields.ALBUM, Id3v2DeclaredFrames.TALB),

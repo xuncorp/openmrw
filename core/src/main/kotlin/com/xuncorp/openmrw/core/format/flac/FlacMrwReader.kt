@@ -52,7 +52,7 @@ internal class FlacMrwReader : MrwReader() {
             if (parts.size == 2) {
                 val field = parts[0].trim()
                 val value = parts[1].trim()
-                mrwFile.mrwComment.add(field, value)
+                mrwFile.tag.add(field, value)
             }
         }
     }
