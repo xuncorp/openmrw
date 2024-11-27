@@ -20,13 +20,13 @@
 package com.xuncorp.openmrw.core
 
 import com.xuncorp.openmrw.core.rw.tag.MrwTag
-import com.xuncorp.openmrw.core.format.MrwStreamInfo
+import com.xuncorp.openmrw.core.rw.streaminfo.MrwStreamInfo
 
 open class MrwFile(val fileType: MrwFileType) {
     /**
      * @see MrwStreamInfo
      */
-    val mrwStreamInfo = MrwStreamInfo()
+    val streamInfo = MrwStreamInfo()
 
     /**
      * @see MrwTag
@@ -34,7 +34,6 @@ open class MrwFile(val fileType: MrwFileType) {
     val tag = MrwTag()
 
     override fun toString(): String {
-        return "MrwFile(fileType=$fileType, mrwStreamInfo=$mrwStreamInfo, " +
-                "tag=$tag)"
+        return "MrwFile(fileType=$fileType, streamInfo=$streamInfo, tag=$tag)"
     }
 }

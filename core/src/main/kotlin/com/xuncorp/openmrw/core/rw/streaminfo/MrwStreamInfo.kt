@@ -17,7 +17,7 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.xuncorp.openmrw.core.format
+package com.xuncorp.openmrw.core.rw.streaminfo
 
 class MrwStreamInfo {
     /**

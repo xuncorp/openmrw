@@ -42,7 +42,7 @@ internal class ApeMrwReader : MrwReader() {
             ApeDescriptor(source)
             // New header.
             val apeHeader = ApeHeader(source)
-            mrwFile.mrwStreamInfo.apply {
+            mrwFile.streamInfo.apply {
                 sampleRate = apeHeader.sampleRate.toInt()
                 channelCount = apeHeader.channels.toInt()
                 bits = apeHeader.bitsPerSample.toInt()
@@ -51,7 +51,7 @@ internal class ApeMrwReader : MrwReader() {
         } else {
             // Old header.
             val apeHeaderOld = ApeHeaderOld(source)
-            mrwFile.mrwStreamInfo.apply {
+            mrwFile.streamInfo.apply {
                 sampleRate = apeHeaderOld.sampleRate.toInt()
                 channelCount = apeHeaderOld.channels.toInt()
                 bits = apeHeaderOld.bits

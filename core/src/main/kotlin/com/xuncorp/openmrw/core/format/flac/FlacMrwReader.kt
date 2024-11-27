@@ -33,7 +33,7 @@ internal class FlacMrwReader : MrwReader() {
     ) {
         val flacStreamInfo = FlacStreamInfo(source.readByteString(flacHeader.length))
 
-        mrwFile.mrwStreamInfo.apply {
+        mrwFile.streamInfo.apply {
             sampleRate = flacStreamInfo.sampleRate
             channelCount = flacStreamInfo.channelCount
             bits = flacStreamInfo.bits
