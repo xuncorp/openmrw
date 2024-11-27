@@ -17,7 +17,11 @@
 
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.xuncorp.openmrw.core.format
+package com.xuncorp.openmrw.core
+
+import com.xuncorp.openmrw.core.format.MrwComment
+import com.xuncorp.openmrw.core.format.MrwFormatType
+import com.xuncorp.openmrw.core.format.MrwStreamInfo
 
 open class MrwFile(val mrwFormatType: MrwFormatType) {
     /**

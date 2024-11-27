@@ -17,7 +17,7 @@
 
 package com.xuncorp.openmrw.core.format.ape
 
-import com.xuncorp.openmrw.core.format.MrwFile
+import com.xuncorp.openmrw.core.MrwFile
 import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties

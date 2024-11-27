@@ -19,7 +19,7 @@
 
 package com.xuncorp.openmrw.core.rw
 
-import com.xuncorp.openmrw.core.format.MrwFile
+import com.xuncorp.openmrw.core.MrwFile
 import kotlinx.io.Source
 
 /**

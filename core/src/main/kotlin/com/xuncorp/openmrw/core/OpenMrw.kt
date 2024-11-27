@@ -19,7 +19,6 @@
 
 package com.xuncorp.openmrw.core
 
-import com.xuncorp.openmrw.core.format.MrwFile
 import com.xuncorp.openmrw.core.format.ape.ApeMrwReader
 import com.xuncorp.openmrw.core.format.flac.FlacMrwReader
 import com.xuncorp.openmrw.core.format.mp3.Mp3MrwReader
