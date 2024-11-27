@@ -22,7 +22,7 @@ package com.xuncorp.openmrw.core.rw.tag.id3v2
 /**
  * ID3v2.3.0 frames.
  */
-internal object Id3v2DeclaredFrames {
+object Id3v2DeclaredFrames {
     /**
      * Audio encryption.
      */

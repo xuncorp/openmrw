@@ -36,6 +36,10 @@ class MrwTag {
         values.add(field to value)
     }
 
+    /**
+     * @see Id3v2DeclaredFrames
+     * @see OggVorbisCommentFields
+     */
     fun get(field: String): List<String> {
         return values.filter { it.first == field }.map { it.second }
     }
@@ -66,28 +70,16 @@ class MrwTag {
  * @see Id3v2DeclaredFrames
  */
 enum class MrwTagField(vararg val field: String) {
-    Title(MrwCommentCommonFields.TITLE, Id3v2DeclaredFrames.TIT2),
-    Artist(MrwCommentCommonFields.ARTIST, Id3v2DeclaredFrames.TPE1),
-    Album(MrwCommentCommonFields.ALBUM, Id3v2DeclaredFrames.TALB),
-    AlbumArtist(MrwCommentCommonFields.ALBUMARTIST, Id3v2DeclaredFrames.TPE2),
-    Genre(MrwCommentCommonFields.GENRE, Id3v2DeclaredFrames.TCON),
-    Lyrics(MrwCommentCommonFields.LYRICS, Id3v2DeclaredFrames.SYLT, Id3v2DeclaredFrames.USLT),
-    TrackNumber(MrwCommentCommonFields.TRACKNUMBER, Id3v2DeclaredFrames.TRCK);
+    Title(OggVorbisCommentFields.TITLE, Id3v2DeclaredFrames.TIT2),
+    Artist(OggVorbisCommentFields.ARTIST, Id3v2DeclaredFrames.TPE1),
+    Album(OggVorbisCommentFields.ALBUM, Id3v2DeclaredFrames.TALB),
+    AlbumArtist(OggVorbisCommentFields.ALBUMARTIST, Id3v2DeclaredFrames.TPE2),
+    Genre(OggVorbisCommentFields.GENRE, Id3v2DeclaredFrames.TCON),
+    Lyrics(OggVorbisCommentFields.LYRICS, Id3v2DeclaredFrames.SYLT, Id3v2DeclaredFrames.USLT),
+    TrackNumber(OggVorbisCommentFields.TRACKNUMBER, Id3v2DeclaredFrames.TRCK),
+    Year(OggVorbisCommentFields.YEAR);
 
     companion object {
         const val SEPARATOR = "/"
     }
-}
-
-/**
- * Common fields used in most formats.
- */
-object MrwCommentCommonFields {
-    const val TITLE = "TITLE"
-    const val ARTIST = "ARTIST"
-    const val ALBUM = "ALBUM"
-    const val ALBUMARTIST = "ALBUMARTIST"
-    const val GENRE = "GENRE"
-    const val LYRICS = "LYRICS"
-    const val TRACKNUMBER = "TRACKNUMBER"
 }
