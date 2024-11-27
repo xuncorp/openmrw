@@ -45,6 +45,7 @@ enum class MrwFormatType {
 
     /**
      * # NetEase Cloud Music
+     *
      * @since 0.1.0-dev04 2024/11/26
      */
     Ncm
