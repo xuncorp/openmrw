@@ -17,15 +17,10 @@
 
 package com.xuncorp.openmrw.core.format.mp3
 
-import com.xuncorp.openmrw.core.format.MrwFormat
-import com.xuncorp.openmrw.core.format.MrwFormatType
 import com.xuncorp.openmrw.core.MrwFile
 import com.xuncorp.openmrw.core.MrwFileType
 import com.xuncorp.openmrw.core.rw.MrwReader
 import com.xuncorp.openmrw.core.rw.ReaderProperties
-import com.xuncorp.openmrw.core.rw.id3v2.Id3v2ExtendedHeader
-import com.xuncorp.openmrw.core.rw.id3v2.Id3v2FrameHeader
-import com.xuncorp.openmrw.core.rw.id3v2.Id3v2Header
 import com.xuncorp.openmrw.core.rw.tag.id3v2.Id3v2ExtendedHeader
 import com.xuncorp.openmrw.core.rw.tag.id3v2.Id3v2FrameHeader
 import com.xuncorp.openmrw.core.rw.tag.id3v2.Id3v2Header
