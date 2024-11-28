@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/xuncorp/openmrw.svg)](https://jitpack.io/#xuncorp/openmrw)
 
-OpenMrw (Open Metadata Reader Writer), a tool library for the JVM platform.
+Audio metadata reading and writing library for Android/JVM platforms.
 
 - **Identify** media files.
 - **Read** media files stream information, metadata, and other information.
