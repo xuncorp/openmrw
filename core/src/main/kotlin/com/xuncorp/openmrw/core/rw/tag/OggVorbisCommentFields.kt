@@ -126,5 +126,6 @@ object OggVorbisCommentFields {
     /**
      * The year the track was recorded.
      */
+    @OpenMrwExtendTagField
     const val YEAR = "YEAR"
 }
