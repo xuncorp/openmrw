@@ -52,9 +52,14 @@ class MrwTag {
     fun get(field: MrwTagField): String {
         return values
             .filter { it.first in field.field }
-            // TODO: Is it only the artist and genre fields that should be concatenated with
-            //   delimiters, while other fields are allowed only one value?
-            .joinToString(MrwTagField.SEPARATOR) { it.second }
+            .run {
+                if (field == MrwTagField.Artist || field == MrwTagField.Genre) {
+                    joinToString(MrwTagField.SEPARATOR) { it.second }
+                } else {
+                    // First one.
+                    firstOrNull()?.second ?: ""
+                }
+            }
     }
 
     fun getAll(): List<Pair<String, String>> {
